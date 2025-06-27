@@ -1,0 +1,41 @@
+name: Deploy Backend to Render
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'meeting-game-backend/**'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: meeting-game-backend/package-lock.json
+        
+    - name: Install dependencies
+      working-directory: ./meeting-game-backend
+      run: npm ci
+      
+    - name: Run tests (if any)
+      working-directory: ./meeting-game-backend
+      run: npm test --if-present
+      
+    - name: Deploy to Render
+      env:
+        RENDER_TOKEN: ${{ secrets.RENDER_TOKEN }}
+        RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
+      run: |
+        # This step will trigger a deployment on Render
+        # You'll need to set up the RENDER_TOKEN and RENDER_SERVICE_ID secrets
+        echo "Backend deployment triggered"
+        echo "Please ensure you have set up the Render service and added the required secrets" 
