@@ -29,8 +29,8 @@ const teams = [
 ];
 
 const adminPasswords = {
-  Omri: "omripass",
-  Yoad: "yoadpass",
+  Omri: "jellyfish42",
+  Yoad: "mountain89",
 };
 
 export default function PlayerSelection({ onSelectPlayer }) {
