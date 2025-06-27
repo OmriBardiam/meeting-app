@@ -12,6 +12,7 @@ const playerAvatars = {
   Tetro: "🐻",
   Idan: "🐨",
   Yoad: "🐯",
+  Segev: "🦒",
 };
 
 const teams = [
@@ -23,7 +24,7 @@ const teams = [
   {
     name: "Team Yoad",
     color: "#d32f2f",
-    members: ["Meitav", "Jules", "Tetro", "Idan", "Yoad"],
+    members: ["Meitav", "Jules", "Tetro", "Idan", "Yoad", "Segev"],
   },
 ];
 
