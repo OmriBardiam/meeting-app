@@ -1,7 +1,17 @@
 const express = require('express');
 const cors = require('cors');
+const http = require('http');
+const socketIo = require('socket.io');
 
 const app = express();
+const server = http.createServer(app);
+const io = socketIo(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
+});
+
 const PORT = process.env.PORT || 3001;
 
 // Middleware
@@ -35,6 +45,90 @@ let gameState = {
     ],
   }
 };
+
+// Chat storage
+let teamChats = {
+  "Team Omri": [],
+  "Team Yoad": []
+};
+
+// Socket.io connection handling
+io.on('connection', (socket) => {
+  console.log('User connected:', socket.id);
+
+  // Join team room
+  socket.on('join-team', ({ player, teamName }) => {
+    socket.join(teamName);
+    socket.player = player;
+    socket.teamName = teamName;
+    console.log(`${player} joined ${teamName}`);
+    
+    // Send existing chat messages
+    socket.emit('chat-history', teamChats[teamName] || []);
+  });
+
+  // Handle chat messages
+  socket.on('send-message', ({ message, player, teamName }) => {
+    const chatMessage = {
+      id: Date.now(),
+      player,
+      message,
+      timestamp: new Date().toISOString(),
+      teamName
+    };
+    
+    // Store message
+    if (!teamChats[teamName]) {
+      teamChats[teamName] = [];
+    }
+    teamChats[teamName].push(chatMessage);
+    
+    // Keep only last 50 messages per team
+    if (teamChats[teamName].length > 50) {
+      teamChats[teamName] = teamChats[teamName].slice(-50);
+    }
+    
+    // Broadcast to team
+    io.to(teamName).emit('new-message', chatMessage);
+  });
+
+  // Handle disconnection
+  socket.on('disconnect', () => {
+    console.log('User disconnected:', socket.id);
+  });
+});
+
+// Chat API endpoints
+app.get('/chat/:teamName', (req, res) => {
+  const { teamName } = req.params;
+  res.json(teamChats[teamName] || []);
+});
+
+app.post('/chat/:teamName', (req, res) => {
+  const { teamName } = req.params;
+  const { player, message } = req.body;
+  
+  if (!teamChats[teamName]) {
+    teamChats[teamName] = [];
+  }
+  
+  const chatMessage = {
+    id: Date.now(),
+    player,
+    message,
+    timestamp: new Date().toISOString(),
+    teamName
+  };
+  
+  teamChats[teamName].push(chatMessage);
+  
+  // Keep only last 50 messages
+  if (teamChats[teamName].length > 50) {
+    teamChats[teamName] = teamChats[teamName].slice(-50);
+  }
+  
+  res.json(chatMessage);
+});
 
 // Routes
 app.get('/state', (req, res) => {
@@ -145,6 +239,6 @@ app.put('/quest', (req, res) => {
   res.json({ success: true, quest: newQuest });
 });
 
-app.listen(PORT, '0.0.0.0', () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on http://0.0.0.0:${PORT}`);
 }); 

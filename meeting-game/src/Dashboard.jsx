@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Chat from './Chat'
 
 // Use the same API base URL logic as App.jsx
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 
@@ -274,6 +275,9 @@ function Dashboard({ player, gameState, onLogout, onScoreUpdate }) {
           </div>
         )}
       </div>
+
+      {/* Team Chat */}
+      <Chat player={player} teamName={team.name} teamColor={team.color} />
     </div>
   );
 }
