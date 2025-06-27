@@ -1,6 +1,6 @@
 import { useState, useEffect, forwardRef, useImperativeHandle } from 'react'
 
-const API_BASE = 'http://192.168.1.243:3001'
+const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
 
 const Gallery = forwardRef(({ player, gameState, onLogout, onScoreUpdate }, ref) => {
   const [gallery, setGallery] = useState([]);

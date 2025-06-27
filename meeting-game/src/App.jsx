@@ -4,7 +4,7 @@ import Dashboard from './Dashboard'
 import Gallery from './Gallery'
 import './App.css'
 
-const API_BASE = 'http://192.168.1.243:3001'
+const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
 
 function App() {
   const [selectedPlayer, setSelectedPlayer] = useState(() => localStorage.getItem('selectedPlayer') || null);
