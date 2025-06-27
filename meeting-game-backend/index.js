@@ -1,8 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -10,19 +7,6 @@ const PORT = process.env.PORT || 3001;
 // Middleware
 app.use(cors());
 app.use(express.json());
-
-const uploadDir = path.join(__dirname, 'uploads');
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, uploadDir),
-  filename: (req, file, cb) => {
-    const unique = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, unique + path.extname(file.originalname));
-  },
-});
-const upload = multer({ storage });
-
-// Serve uploads statically
-app.use('/uploads', express.static(uploadDir));
 
 // In-memory storage
 let gameState = {
@@ -159,22 +143,6 @@ app.put('/quest', (req, res) => {
   const newQuest = { id: newId, text: text.trim(), completed: false };
   quests.push(newQuest);
   res.json({ success: true, quest: newQuest });
-});
-
-// Upload endpoint
-app.post('/upload', upload.single('media'), (req, res) => {
-  if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
-  res.json({ success: true, url: `/uploads/${req.file.filename}` });
-});
-
-// Gallery endpoint
-app.get('/gallery', (req, res) => {
-  fs.readdir(uploadDir, (err, files) => {
-    if (err) return res.status(500).json({ error: 'Failed to read gallery' });
-    // Only return image/video files
-    const mediaFiles = files.filter(f => /\.(jpg|jpeg|png|gif|mp4|webm|mov)$/i.test(f));
-    res.json({ files: mediaFiles.map(f => `/uploads/${f}`) });
-  });
 });
 
 app.listen(PORT, () => {

@@ -1,13 +1,12 @@
 # Meeting Game App
 
-A full-stack web application for team-based meeting games with real-time scoring, quests, and media sharing.
+A full-stack web application for team-based meeting games with real-time scoring and quests.
 
 ## 🎮 Features
 
 - **Team Management**: Two teams with customizable members and colors
 - **Real-time Scoring**: Live score updates with admin controls
 - **Secret Quests**: Team-specific quests with point rewards
-- **Media Gallery**: Photo and video sharing with Pinterest-style layout
 - **Responsive Design**: Mobile-first design with modern UI
 - **Real-time Updates**: Automatic polling for live data
 
@@ -15,7 +14,6 @@ A full-stack web application for team-based meeting games with real-time scoring
 
 - **Frontend**: React + Vite
 - **Backend**: Node.js + Express
-- **File Upload**: Multer
 - **Styling**: CSS-in-JS with modern design
 - **Deployment**: GitHub Actions + Vercel + Render
 
@@ -83,7 +81,7 @@ A full-stack web application for team-based meeting games with real-time scoring
    - **Value**: Your Render backend URL (e.g., `https://meeting-app-backend.onrender.com`)
 5. Deploy
 
-#### 3. Configure GitHub Secrets
+#### 3. Configure GitHub Secrets (Optional)
 
 Go to your GitHub repository → Settings → Secrets and variables → Actions, and add:
 
@@ -113,12 +111,11 @@ meeting-app/
 │   ├── src/
 │   │   ├── App.jsx       # Main app component
 │   │   ├── Dashboard.jsx # Team dashboard
-│   │   ├── Gallery.jsx   # Media gallery
+│   │   ├── PlayerSelection.jsx # Player selection screen
 │   │   └── ...
 │   └── package.json
 ├── meeting-game-backend/  # Node.js backend
 │   ├── index.js          # Express server
-│   ├── uploads/          # Media storage
 │   └── package.json
 └── .github/workflows/    # GitHub Actions
 ```
@@ -165,8 +162,8 @@ let gameState = {
 
 1. **Select Player**: Choose your name from the team list
 2. **Dashboard**: View team scores, members, and quests
-3. **Gallery**: Browse and upload team photos/videos
-4. **Admin Controls**: Team admins can update scores and manage quests
+3. **Admin Controls**: Team admins can update scores and manage quests
+4. **Real-time Updates**: Scores and quests update automatically
 
 ## 🤝 Contributing
 
