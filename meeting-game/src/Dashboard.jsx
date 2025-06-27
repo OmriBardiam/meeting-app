@@ -1,6 +1,8 @@
 import { useState } from 'react'
 
-const API_BASE = 'http://192.168.1.243:3001'
+// Use the same API base URL logic as App.jsx
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 
+  (import.meta.env.DEV ? 'http://localhost:3001' : 'https://meeting-app-backend-hh3f.onrender.com');
 
 const initialTeams = {
   "Team Omri": {
