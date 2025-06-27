@@ -13,7 +13,7 @@ const initialTeams = {
   },
   "Team Yoad": {
     color: '#d32f2f',
-    members: ["Meitav", "Jules", "Tetro", "Idan", "Yoad"],
+    members: ["Meitav", "Jules", "Tetro", "Idan", "Yoad", "Segev"],
     score: 0,
     admin: "Yoad",
   },
