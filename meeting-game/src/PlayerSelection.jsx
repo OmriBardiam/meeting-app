@@ -28,9 +28,21 @@ const teams = [
   },
 ];
 
-const adminPasswords = {
+const playerPasswords = {
+  // Team Omri
+  Keniya: "dolphin17",
+  Pita: "sunset34",
+  Misha: "forest56",
+  Roni: "ocean78",
   Omri: "jellyfish42",
+  
+  // Team Yoad
+  Meitav: "river91",
+  Jules: "cloud23",
+  Tetro: "star45",
+  Idan: "moon67",
   Yoad: "mountain89",
+  Segev: "eagle12",
 };
 
 export default function PlayerSelection({ onSelectPlayer }) {
@@ -39,7 +51,7 @@ export default function PlayerSelection({ onSelectPlayer }) {
   const [error, setError] = useState("");
 
   function handlePlayerClick(name) {
-    if (adminPasswords[name]) {
+    if (playerPasswords[name]) {
       setPendingAdmin(name);
       setPassword("");
       setError("");
@@ -50,7 +62,7 @@ export default function PlayerSelection({ onSelectPlayer }) {
 
   function handlePasswordSubmit(e) {
     e.preventDefault();
-    if (password === adminPasswords[pendingAdmin]) {
+    if (password === playerPasswords[pendingAdmin]) {
       onSelectPlayer(pendingAdmin);
     } else {
       setError("Incorrect password");
@@ -71,7 +83,7 @@ export default function PlayerSelection({ onSelectPlayer }) {
             autoFocus
           />
           <button type="submit" className="player-button card-style" style={{ background: teams.find(t => t.members.includes(pendingAdmin)).color }}>
-            Confirm
+            Join Game
           </button>
           {error && <div style={{ color: 'red' }}>{error}</div>}
         </form>
