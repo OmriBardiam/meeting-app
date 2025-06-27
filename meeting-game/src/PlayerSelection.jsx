@@ -19,12 +19,12 @@ const teams = [
   {
     name: "Team Omri",
     color: "#1976d2",
-    members: ["Keniya", "Pita", "Misha", "Roni", "Omri"],
+    members: ["Keniya", "Pita", "Misha", "Roni", "Omri", "Segev"],
   },
   {
     name: "Team Yoad",
     color: "#d32f2f",
-    members: ["Meitav", "Jules", "Tetro", "Idan", "Yoad", "Segev"],
+    members: ["Meitav", "Jules", "Tetro", "Idan", "Yoad"],
   },
 ];
 

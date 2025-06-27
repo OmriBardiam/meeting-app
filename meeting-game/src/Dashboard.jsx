@@ -8,13 +8,13 @@ const API_BASE = import.meta.env.VITE_API_BASE_URL ||
 const initialTeams = {
   "Team Omri": {
     color: '#1976d2',
-    members: ["Keniya", "Pita", "Misha", "Roni", "Omri"],
+    members: ["Keniya", "Pita", "Misha", "Roni", "Omri", "Segev"],
     score: 0,
     admin: "Omri",
   },
   "Team Yoad": {
     color: '#d32f2f',
-    members: ["Meitav", "Jules", "Tetro", "Idan", "Yoad", "Segev"],
+    members: ["Meitav", "Jules", "Tetro", "Idan", "Yoad"],
     score: 0,
     admin: "Yoad",
   },
