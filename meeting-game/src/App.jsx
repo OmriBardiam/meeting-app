@@ -11,6 +11,10 @@ const API_BASE = import.meta.env.VITE_API_BASE_URL ||
     ? 'https://meeting-app-backend-hh3f.onrender.com'
     : 'https://meeting-app-backend-hh3f.onrender.com');
 
+// Debug logging
+console.log('Current hostname:', window.location.hostname);
+console.log('API Base URL:', API_BASE);
+
 function App() {
   const [selectedPlayer, setSelectedPlayer] = useState(() => localStorage.getItem('selectedPlayer') || null);
   const [gameState, setGameState] = useState(null);
@@ -18,12 +22,17 @@ function App() {
 
   async function fetchGameState() {
     try {
+      console.log('Fetching game state from:', `${API_BASE}/state`);
       const response = await fetch(`${API_BASE}/state`);
+      console.log('Response status:', response.status);
       if (response.ok) {
         const data = await response.json();
+        console.log('Game state received:', data);
         setGameState(data);
       } else {
-        console.error('Failed to fetch game state');
+        console.error('Failed to fetch game state. Status:', response.status);
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
       }
     } catch (error) {
       console.error('Error fetching game state:', error);
