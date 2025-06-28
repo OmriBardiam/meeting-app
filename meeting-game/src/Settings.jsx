@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import './Settings.css';
 
 // Use the same API base URL logic as App.jsx
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 
@@ -38,6 +37,17 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(true);
 
+  // Get player's team for theming
+  const getPlayerTeam = () => {
+    for (const [teamName, team] of Object.entries(gameState.teams)) {
+      if (team.members.includes(player)) {
+        return { ...team, name: teamName };
+      }
+    }
+    return null;
+  };
+  const playerTeam = getPlayerTeam();
+
   // Load current settings from backend
   useEffect(() => {
     async function loadSettings() {
@@ -66,14 +76,38 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
 
   if (!isAdmin) {
     return (
-      <div className="settings-container">
-        <div className="settings-header">
-          <h1>🏆 Drunksters Settings</h1>
-          <button onClick={onBack} className="back-button">← Back</button>
-        </div>
-        <div className="access-denied">
-          <h2>Access Denied</h2>
-          <p>Only team admins can access settings.</p>
+      <div style={{
+        minHeight: '100vh',
+        background: `linear-gradient(135deg, ${playerTeam?.color || '#667eea'}20 0%, ${playerTeam?.color || '#764ba2'}40 100%)`,
+        padding: '2rem',
+        fontFamily: 'Inter, system-ui, Avenir, Helvetica, Arial, sans-serif'
+      }}>
+        <div style={{
+          background: 'rgba(255,255,255,0.85)',
+          borderRadius: 16,
+          boxShadow: '0 2px 12px #0002',
+          padding: '1.5rem',
+          border: '1.5px solid #fff',
+          backdropFilter: 'blur(2px)',
+          maxWidth: 600,
+          margin: '0 auto'
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+            <h1 style={{ color: playerTeam?.color || '#667eea', fontWeight: 800, fontSize: '1.8rem', margin: 0 }}>🏆 Drunksters Settings</h1>
+            <button onClick={onBack} style={{
+              background: playerTeam?.color || '#667eea',
+              color: 'white',
+              border: 'none',
+              borderRadius: 8,
+              padding: '0.5rem 1rem',
+              cursor: 'pointer',
+              fontWeight: 600
+            }}>← Back</button>
+          </div>
+          <div style={{ textAlign: 'center', padding: '2rem', color: '#666' }}>
+            <h2 style={{ color: playerTeam?.color || '#667eea', marginBottom: '1rem' }}>Access Denied</h2>
+            <p>Only team admins can access settings.</p>
+          </div>
         </div>
       </div>
     );
@@ -81,13 +115,37 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
 
   if (loading) {
     return (
-      <div className="settings-container">
-        <div className="settings-header">
-          <h1>🏆 Drunksters Settings</h1>
-          <button onClick={onBack} className="back-button">← Back</button>
-        </div>
-        <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
-          Loading settings...
+      <div style={{
+        minHeight: '100vh',
+        background: `linear-gradient(135deg, ${playerTeam?.color || '#667eea'}20 0%, ${playerTeam?.color || '#764ba2'}40 100%)`,
+        padding: '2rem',
+        fontFamily: 'Inter, system-ui, Avenir, Helvetica, Arial, sans-serif'
+      }}>
+        <div style={{
+          background: 'rgba(255,255,255,0.85)',
+          borderRadius: 16,
+          boxShadow: '0 2px 12px #0002',
+          padding: '1.5rem',
+          border: '1.5px solid #fff',
+          backdropFilter: 'blur(2px)',
+          maxWidth: 600,
+          margin: '0 auto'
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+            <h1 style={{ color: playerTeam?.color || '#667eea', fontWeight: 800, fontSize: '1.8rem', margin: 0 }}>🏆 Drunksters Settings</h1>
+            <button onClick={onBack} style={{
+              background: playerTeam?.color || '#667eea',
+              color: 'white',
+              border: 'none',
+              borderRadius: 8,
+              padding: '0.5rem 1rem',
+              cursor: 'pointer',
+              fontWeight: 600
+            }}>← Back</button>
+          </div>
+          <div style={{ textAlign: 'center', padding: '2rem', color: '#666' }}>
+            Loading settings...
+          </div>
         </div>
       </div>
     );
@@ -195,161 +253,268 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
   };
 
   return (
-    <div className="settings-container">
-      <div className="settings-header">
-        <h1>🏆 Drunksters Settings</h1>
-        <button onClick={onBack} className="back-button">← Back</button>
-      </div>
-
-      {message && (
-        <div className={`message ${message.includes('success') ? 'success' : 'error'}`}>
-          {message}
+    <div style={{
+      minHeight: '100vh',
+      background: `linear-gradient(135deg, ${playerTeam?.color || '#667eea'}20 0%, ${playerTeam?.color || '#764ba2'}40 100%)`,
+      padding: '2rem',
+      fontFamily: 'Inter, system-ui, Avenir, Helvetica, Arial, sans-serif'
+    }}>
+      <div style={{
+        background: 'rgba(255,255,255,0.85)',
+        borderRadius: 16,
+        boxShadow: '0 2px 12px #0002',
+        padding: '1.5rem',
+        border: '1.5px solid #fff',
+        backdropFilter: 'blur(2px)',
+        maxWidth: 800,
+        margin: '0 auto'
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+          <h1 style={{ color: playerTeam?.color || '#667eea', fontWeight: 800, fontSize: '1.8rem', margin: 0 }}>🏆 Drunksters Settings</h1>
+          <button onClick={onBack} style={{
+            background: playerTeam?.color || '#667eea',
+            color: 'white',
+            border: 'none',
+            borderRadius: 8,
+            padding: '0.5rem 1rem',
+            cursor: 'pointer',
+            fontWeight: 600
+          }}>← Back</button>
         </div>
-      )}
 
-      <div className="settings-content">
-        {/* Team Management */}
-        <div className="settings-section">
-          <h2>Team Management</h2>
-          {Object.entries(settings.teams).map(([teamName, team]) => (
-            <div key={teamName} className="team-settings">
-              <div className="team-header">
-                <h3 style={{ color: team.color }}>{teamName}</h3>
-                <button 
-                  onClick={() => handleTeamEdit(teamName)}
-                  className="edit-button"
-                >
-                  {editingTeam === teamName ? 'Done' : 'Edit'}
-                </button>
-              </div>
+        {message && (
+          <div style={{
+            padding: '1rem',
+            borderRadius: 8,
+            marginBottom: '1rem',
+            background: message.includes('success') ? '#4caf50' : '#f44336',
+            color: 'white',
+            fontWeight: 600
+          }}>
+            {message}
+          </div>
+        )}
 
-              {editingTeam === teamName && (
-                <div className="team-edit">
-                  {/* Team Color */}
-                  <div className="setting-item">
-                    <label>Team Color:</label>
-                    <input
-                      type="color"
-                      value={team.color}
-                      onChange={(e) => setSettings(prev => ({
-                        ...prev,
-                        teams: {
-                          ...prev.teams,
-                          [teamName]: { ...team, color: e.target.value }
-                        }
-                      }))}
-                    />
-                  </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+          {/* Team Management */}
+          <div style={{
+            background: 'rgba(255,255,255,0.7)',
+            borderRadius: 12,
+            padding: '1.5rem',
+            border: '1px solid rgba(255,255,255,0.3)'
+          }}>
+            <h2 style={{ color: playerTeam?.color || '#667eea', fontWeight: 700, marginBottom: '1.5rem' }}>Team Management</h2>
+            {Object.entries(settings.teams).map(([teamName, team]) => (
+              <div key={teamName} style={{
+                background: 'rgba(255,255,255,0.5)',
+                borderRadius: 8,
+                padding: '1rem',
+                marginBottom: '1rem',
+                border: '1px solid rgba(255,255,255,0.3)'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                  <h3 style={{ color: team.color, fontWeight: 700, margin: 0 }}>{teamName}</h3>
+                  <button 
+                    onClick={() => handleTeamEdit(teamName)}
+                    style={{
+                      background: team.color,
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: 6,
+                      padding: '0.5rem 1rem',
+                      cursor: 'pointer',
+                      fontWeight: 600
+                    }}
+                  >
+                    {editingTeam === teamName ? 'Done' : 'Edit'}
+                  </button>
+                </div>
 
-                  {/* Team Password */}
-                  <div className="setting-item">
-                    <label>Team Password:</label>
-                    <input
-                      type="text"
-                      value={team.password}
-                      onChange={(e) => handleChangePassword(teamName, 'password', e.target.value)}
-                      placeholder="Team password"
-                    />
-                  </div>
-
-                  {/* Admin Password */}
-                  <div className="setting-item">
-                    <label>Admin Password:</label>
-                    <input
-                      type="text"
-                      value={team.adminPassword}
-                      onChange={(e) => handleChangePassword(teamName, 'adminPassword', e.target.value)}
-                      placeholder="Admin password"
-                    />
-                  </div>
-
-                  {/* Team Members */}
-                  <div className="setting-item">
-                    <label>Team Members:</label>
-                    <div className="members-list">
-                      {team.members.map(member => (
-                        <div key={member} className="member-item">
-                          <span>{member}</span>
-                          <button 
-                            onClick={() => handleRemoveMember(teamName, member)}
-                            className="remove-button"
-                            disabled={member === team.admin}
-                          >
-                            ×
-                          </button>
-                        </div>
-                      ))}
+                {editingTeam === teamName && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    {/* Team Color */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                      <label style={{ fontWeight: 600, minWidth: '120px' }}>Team Color:</label>
+                      <input
+                        type="color"
+                        value={team.color}
+                        onChange={(e) => setSettings(prev => ({
+                          ...prev,
+                          teams: {
+                            ...prev.teams,
+                            [teamName]: { ...team, color: e.target.value }
+                          }
+                        }))}
+                        style={{ width: '50px', height: '30px', border: 'none', borderRadius: 4 }}
+                      />
                     </div>
-                    <div className="add-member">
+
+                    {/* Team Password */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                      <label style={{ fontWeight: 600, minWidth: '120px' }}>Team Password:</label>
                       <input
                         type="text"
-                        value={newMember}
-                        onChange={(e) => setNewMember(e.target.value)}
-                        placeholder="New member name"
-                        onKeyPress={(e) => e.key === 'Enter' && handleAddMember(teamName)}
+                        value={team.password}
+                        onChange={(e) => handleChangePassword(teamName, 'password', e.target.value)}
+                        placeholder="Team password"
+                        style={{ flex: 1, padding: '0.5rem', borderRadius: 6, border: '1px solid #ccc' }}
                       />
-                      <button onClick={() => handleAddMember(teamName)}>Add</button>
+                    </div>
+
+                    {/* Admin Password */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                      <label style={{ fontWeight: 600, minWidth: '120px' }}>Admin Password:</label>
+                      <input
+                        type="text"
+                        value={team.adminPassword}
+                        onChange={(e) => handleChangePassword(teamName, 'adminPassword', e.target.value)}
+                        placeholder="Admin password"
+                        style={{ flex: 1, padding: '0.5rem', borderRadius: 6, border: '1px solid #ccc' }}
+                      />
+                    </div>
+
+                    {/* Team Members */}
+                    <div>
+                      <label style={{ fontWeight: 600, display: 'block', marginBottom: '0.5rem' }}>Team Members:</label>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1rem' }}>
+                        {team.members.map(member => (
+                          <div key={member} style={{
+                            background: '#fff',
+                            borderRadius: 6,
+                            padding: '0.25rem 0.5rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.5rem',
+                            border: '1px solid #eee'
+                          }}>
+                            <span>{member}</span>
+                            <button 
+                              onClick={() => handleRemoveMember(teamName, member)}
+                              style={{
+                                background: '#f44336',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '50%',
+                                width: '20px',
+                                height: '20px',
+                                cursor: 'pointer',
+                                fontSize: '12px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                              }}
+                              disabled={member === team.admin}
+                            >
+                              ×
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                      <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <input
+                          type="text"
+                          value={newMember}
+                          onChange={(e) => setNewMember(e.target.value)}
+                          placeholder="New member name"
+                          onKeyPress={(e) => e.key === 'Enter' && handleAddMember(teamName)}
+                          style={{ flex: 1, padding: '0.5rem', borderRadius: 6, border: '1px solid #ccc' }}
+                        />
+                        <button onClick={() => handleAddMember(teamName)} style={{
+                          background: team.color,
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: 6,
+                          padding: '0.5rem 1rem',
+                          cursor: 'pointer',
+                          fontWeight: 600
+                        }}>Add</button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-
-        {/* Game Settings */}
-        <div className="settings-section">
-          <h2>Game Settings</h2>
-          
-          <div className="setting-item">
-            <label>Quest Points:</label>
-            <input
-              type="number"
-              value={settings.questPoints}
-              onChange={(e) => setSettings(prev => ({ ...prev, questPoints: parseInt(e.target.value) || 0 }))}
-              min="1"
-              max="100"
-            />
+                )}
+              </div>
+            ))}
           </div>
 
-          <div className="setting-item">
-            <label>Master Password:</label>
-            <input
-              type="text"
-              value={settings.masterPassword}
-              onChange={(e) => setSettings(prev => ({ ...prev, masterPassword: e.target.value }))}
-              placeholder="Master admin password"
-            />
-          </div>
-
-          <div className="setting-item">
-            <label>
+          {/* Game Settings */}
+          <div style={{
+            background: 'rgba(255,255,255,0.7)',
+            borderRadius: 12,
+            padding: '1.5rem',
+            border: '1px solid rgba(255,255,255,0.3)'
+          }}>
+            <h2 style={{ color: playerTeam?.color || '#667eea', fontWeight: 700, marginBottom: '1.5rem' }}>Game Settings</h2>
+            
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+              <label style={{ fontWeight: 600, minWidth: '120px' }}>Quest Points:</label>
               <input
-                type="checkbox"
-                checked={settings.chatEnabled}
-                onChange={(e) => setSettings(prev => ({ ...prev, chatEnabled: e.target.checked }))}
+                type="number"
+                value={settings.questPoints}
+                onChange={(e) => setSettings(prev => ({ ...prev, questPoints: parseInt(e.target.value) || 0 }))}
+                min="1"
+                max="100"
+                style={{ padding: '0.5rem', borderRadius: 6, border: '1px solid #ccc', width: '100px' }}
               />
-              Enable team chat
-            </label>
-          </div>
-        </div>
+            </div>
 
-        {/* Action Buttons */}
-        <div className="settings-actions">
-          <button 
-            onClick={handleSaveSettings} 
-            className="save-button"
-            disabled={saving}
-          >
-            {saving ? 'Saving...' : 'Save Settings'}
-          </button>
-          
-          <button 
-            onClick={handleResetToDefault} 
-            className="reset-button"
-          >
-            Reset to Default
-          </button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+              <label style={{ fontWeight: 600, minWidth: '120px' }}>Master Password:</label>
+              <input
+                type="text"
+                value={settings.masterPassword}
+                onChange={(e) => setSettings(prev => ({ ...prev, masterPassword: e.target.value }))}
+                placeholder="Master admin password"
+                style={{ flex: 1, padding: '0.5rem', borderRadius: 6, border: '1px solid #ccc' }}
+              />
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600 }}>
+                <input
+                  type="checkbox"
+                  checked={settings.chatEnabled}
+                  onChange={(e) => setSettings(prev => ({ ...prev, chatEnabled: e.target.checked }))}
+                  style={{ width: '18px', height: '18px' }}
+                />
+                Enable team chat
+              </label>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+            <button 
+              onClick={handleSaveSettings} 
+              disabled={saving}
+              style={{
+                background: playerTeam?.color || '#667eea',
+                color: 'white',
+                border: 'none',
+                borderRadius: 8,
+                padding: '0.75rem 2rem',
+                cursor: 'pointer',
+                fontWeight: 600,
+                fontSize: '1rem'
+              }}
+            >
+              {saving ? 'Saving...' : 'Save Settings'}
+            </button>
+            <button 
+              onClick={handleResetToDefault}
+              style={{
+                background: '#ff9800',
+                color: 'white',
+                border: 'none',
+                borderRadius: 8,
+                padding: '0.75rem 2rem',
+                cursor: 'pointer',
+                fontWeight: 600,
+                fontSize: '1rem'
+              }}
+            >
+              Reset to Default
+            </button>
+          </div>
         </div>
       </div>
     </div>

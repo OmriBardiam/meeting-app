@@ -33,7 +33,7 @@ function getTeamByPlayer(player, teams) {
   return null;
 }
 
-function Dashboard({ player, gameState, onLogout, onScoreUpdate, onOpenSettings, onChangeTeam }) {
+function Dashboard({ player, gameState, onLogout, onScoreUpdate, onOpenSettings, onChangeUser }) {
   const team = getTeamByPlayer(player, gameState.teams);
   if (!team) return <div>Team not found.</div>;
   const isAdmin = player === team.admin;
@@ -182,7 +182,8 @@ function Dashboard({ player, gameState, onLogout, onScoreUpdate, onOpenSettings,
       padding: '2vw 1vw 1vw 1vw',
       fontFamily: 'Inter, system-ui, Avenir, Helvetica, Arial, sans-serif',
       maxWidth: '100vw',
-      position: 'relative'
+      position: 'relative',
+      background: `linear-gradient(135deg, ${team.color}20 0%, ${team.color}40 100%)`
     }}>
       {/* Team Info & Score */}
       <div style={{ width: '100%', maxWidth: 340, marginBottom: '1.2rem', background: 'rgba(255,255,255,0.85)', borderRadius: 16, boxShadow: '0 2px 12px #0002', padding: '1rem 0.7rem', textAlign: 'center', border: '1.5px solid #fff', backdropFilter: 'blur(2px)', position: 'relative' }}>
@@ -230,14 +231,14 @@ function Dashboard({ player, gameState, onLogout, onScoreUpdate, onOpenSettings,
           </button>
         )}
 
-        {/* Change Team Button */}
+        {/* Change User Button */}
         <button 
-          onClick={onChangeTeam}
+          onClick={onChangeUser}
           style={{
             position: 'absolute',
             bottom: '0.5rem',
             right: '0.5rem',
-            background: '#ff9800',
+            background: team.color,
             color: 'white',
             border: 'none',
             borderRadius: 8,
@@ -248,7 +249,7 @@ function Dashboard({ player, gameState, onLogout, onScoreUpdate, onOpenSettings,
             boxShadow: '0 1px 4px #0002'
           }}
         >
-          🔄
+          👥
         </button>
         
         <h1 style={{ color: team.color, fontWeight: 800, fontSize: '1.4rem', margin: 0, textShadow: '0 2px 8px #0001' }}>🏆 Drunksters</h1>

@@ -213,7 +213,7 @@ export default function TeamSelection({ onSelectPlayer }) {
           ))}
         </div>
         <button style={{ marginTop: '1rem', background: '#888', color: 'white', border: 'none', borderRadius: 8, padding: '0.5rem 1rem' }} onClick={handleBack}>
-          ← Back to Password
+          ← Back to Teams
         </button>
       </div>
     );

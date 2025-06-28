@@ -81,12 +81,9 @@ function App() {
     localStorage.removeItem('teamPassword');
   }
 
-  function handleChangeTeam() {
+  function handleChangeUser() {
     setSelectedPlayer(null);
-    setSelectedTeam(null);
-    localStorage.removeItem('selectedPlayer');
-    localStorage.removeItem('selectedTeam');
-    localStorage.removeItem('teamPassword');
+    // Keep the team selected so user goes back to user selection screen
   }
 
   function handleOpenSettings() {
@@ -116,7 +113,8 @@ function App() {
         alignItems: 'center', 
         height: '100vh',
         fontSize: '1.2rem',
-        color: '#666'
+        color: '#666',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
       }}>
         Loading Drunksters...
       </div>
@@ -146,7 +144,7 @@ function App() {
         onLogout={handleLogout} 
         onScoreUpdate={fetchGameState}
         onOpenSettings={handleOpenSettings}
-        onChangeTeam={handleChangeTeam}
+        onChangeUser={handleChangeUser}
       />
     </div>
   );
