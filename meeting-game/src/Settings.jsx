@@ -333,7 +333,6 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
                     {/* Team Color */}
                     <div style={{ 
                       display: 'flex', 
-                      alignItems: 'center', 
                       gap: LAYOUT.SMALL_GAP,
                       flexDirection: responsiveStyles.isMobile ? 'column' : 'row',
                       alignItems: responsiveStyles.isMobile ? 'flex-start' : 'center'
@@ -366,7 +365,6 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
                     {/* Team Password */}
                     <div style={{ 
                       display: 'flex', 
-                      alignItems: 'center', 
                       gap: LAYOUT.SMALL_GAP,
                       flexDirection: responsiveStyles.isMobile ? 'column' : 'row',
                       alignItems: responsiveStyles.isMobile ? 'flex-start' : 'center',
@@ -399,7 +397,6 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
                     {/* Admin Password */}
                     <div style={{ 
                       display: 'flex', 
-                      alignItems: 'center', 
                       gap: LAYOUT.SMALL_GAP,
                       flexDirection: responsiveStyles.isMobile ? 'column' : 'row',
                       alignItems: responsiveStyles.isMobile ? 'flex-start' : 'center',
@@ -534,7 +531,6 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
             
             <div style={{ 
               display: 'flex', 
-              alignItems: 'center', 
               gap: LAYOUT.SMALL_GAP, 
               marginBottom: LAYOUT.ITEM_GAP,
               flexDirection: responsiveStyles.isMobile ? 'column' : 'row',
@@ -566,7 +562,6 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
 
             <div style={{ 
               display: 'flex', 
-              alignItems: 'center', 
               gap: LAYOUT.SMALL_GAP, 
               marginBottom: LAYOUT.ITEM_GAP,
               flexDirection: responsiveStyles.isMobile ? 'column' : 'row',
@@ -599,7 +594,6 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
 
             <div style={{ 
               display: 'flex', 
-              alignItems: 'center', 
               gap: LAYOUT.SMALL_GAP,
               flexDirection: responsiveStyles.isMobile ? 'column' : 'row',
               alignItems: responsiveStyles.isMobile ? 'flex-start' : 'center'
