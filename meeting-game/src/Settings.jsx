@@ -91,14 +91,17 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
   // Common styles
   const containerStyle = {
     minHeight: '100vh',
-    background: `linear-gradient(135deg, ${playerTeam?.color || '#667eea'}20 0%, ${playerTeam?.color || '#764ba2'}40 100%)`,
-    padding: responsiveStyles.padding,
-    fontFamily: 'Inter, system-ui, Avenir, Helvetica, Arial, sans-serif',
+    width: '100vw',
+    margin: 0,
+    boxSizing: 'border-box',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    width: '100%',
-    boxSizing: 'border-box',
+    padding: responsiveStyles.isMobile ? '1rem' : '2vw 1vw 1vw 1vw',
+    fontFamily: 'Inter, system-ui, Avenir, Helvetica, Arial, sans-serif',
+    maxWidth: '100vw',
+    position: 'relative',
+    background: `linear-gradient(135deg, ${playerTeam?.color || '#667eea'}20 0%, ${playerTeam?.color || '#764ba2'}40 100%)`,
     overflow: 'hidden' // Prevent horizontal scroll
   };
 
@@ -109,8 +112,8 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
     padding: responsiveStyles.isMobile ? '1rem' : responsiveStyles.padding,
     border: '1.5px solid #fff',
     backdropFilter: 'blur(2px)',
-    maxWidth: responsiveStyles.containerMaxWidth,
     width: '100%',
+    maxWidth: responsiveStyles.isMobile ? '95vw' : '600px',
     margin: '0 auto',
     boxSizing: 'border-box',
     overflow: 'hidden' // Prevent horizontal scroll
