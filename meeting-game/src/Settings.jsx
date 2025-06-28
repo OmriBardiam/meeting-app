@@ -5,8 +5,8 @@ const API_BASE = import.meta.env.VITE_API_BASE_URL ||
   (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
     ? 'http://localhost:3001' 
     : window.location.hostname.includes('github.io')
-    ? 'https://meeting-app-backend-hh3f.onrender.com'
-    : 'http://192.168.1.243:3001');
+    ? 'https://drunksters-backend-production.up.railway.app'
+    : 'https://drunksters-backend-production.up.railway.app');
 
 function Settings({ player, gameState, onBack, onUpdateGameState }) {
   const [settings, setSettings] = useState({
