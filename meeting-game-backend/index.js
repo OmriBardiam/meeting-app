@@ -62,9 +62,7 @@ let gameState = {
   settings: {
     questPoints: 10,
     masterPassword: "admin2024",
-    autoSave: true,
-    chatEnabled: true,
-    realTimeUpdates: true
+    chatEnabled: true
   }
 };
 
@@ -308,14 +306,8 @@ app.post('/settings', (req, res) => {
     if (settings.masterPassword !== undefined) {
       gameState.settings.masterPassword = settings.masterPassword;
     }
-    if (settings.autoSave !== undefined) {
-      gameState.settings.autoSave = settings.autoSave;
-    }
     if (settings.chatEnabled !== undefined) {
       gameState.settings.chatEnabled = settings.chatEnabled;
-    }
-    if (settings.realTimeUpdates !== undefined) {
-      gameState.settings.realTimeUpdates = settings.realTimeUpdates;
     }
     
     console.log(`Settings updated by ${admin}:`, settings);

@@ -23,17 +23,15 @@ const playerAvatars = {
   Segev: "🦒",
 };
 
-// Master password for admin access to any user
-const MASTER_PASSWORD = "admin2024";
-
 export default function PlayerSelection({ onSelectPlayer }) {
   const [teams, setTeams] = useState([]);
+  const [masterPassword, setMasterPassword] = useState("admin2024");
   const [pendingPlayer, setPendingPlayer] = useState(null);
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
-  // Load teams from backend
+  // Load teams and master password from backend
   useEffect(() => {
     async function loadTeams() {
       try {
@@ -45,6 +43,7 @@ export default function PlayerSelection({ onSelectPlayer }) {
             ...team
           }));
           setTeams(teamsArray);
+          setMasterPassword(data.settings?.masterPassword || "admin2024");
         } else {
           // Fallback to default teams if API fails
           setTeams([
@@ -112,7 +111,7 @@ export default function PlayerSelection({ onSelectPlayer }) {
     const isValidPassword = 
       password === playerTeam.password || 
       password === playerTeam.adminPassword || 
-      password === MASTER_PASSWORD;
+      password === masterPassword;
 
     if (isValidPassword) {
       onSelectPlayer(pendingPlayer);

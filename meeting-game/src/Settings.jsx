@@ -29,9 +29,7 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
     },
     questPoints: 10,
     masterPassword: "admin2024",
-    autoSave: true,
-    chatEnabled: true,
-    realTimeUpdates: true
+    chatEnabled: true
   });
 
   const [editingTeam, setEditingTeam] = useState(null);
@@ -51,9 +49,7 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
             teams: data.teams,
             questPoints: data.settings?.questPoints || 10,
             masterPassword: data.settings?.masterPassword || "admin2024",
-            autoSave: data.settings?.autoSave !== false,
-            chatEnabled: data.settings?.chatEnabled !== false,
-            realTimeUpdates: data.settings?.realTimeUpdates !== false
+            chatEnabled: data.settings?.chatEnabled !== false
           });
         }
       } catch (error) {
@@ -193,9 +189,7 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
       },
       questPoints: 10,
       masterPassword: "admin2024",
-      autoSave: true,
-      chatEnabled: true,
-      realTimeUpdates: true
+      chatEnabled: true
     };
     setSettings(defaultSettings);
   };
@@ -332,32 +326,10 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
             <label>
               <input
                 type="checkbox"
-                checked={settings.autoSave}
-                onChange={(e) => setSettings(prev => ({ ...prev, autoSave: e.target.checked }))}
-              />
-              Auto-save settings
-            </label>
-          </div>
-
-          <div className="setting-item">
-            <label>
-              <input
-                type="checkbox"
                 checked={settings.chatEnabled}
                 onChange={(e) => setSettings(prev => ({ ...prev, chatEnabled: e.target.checked }))}
               />
               Enable team chat
-            </label>
-          </div>
-
-          <div className="setting-item">
-            <label>
-              <input
-                type="checkbox"
-                checked={settings.realTimeUpdates}
-                onChange={(e) => setSettings(prev => ({ ...prev, realTimeUpdates: e.target.checked }))}
-              />
-              Real-time updates
             </label>
           </div>
         </div>
