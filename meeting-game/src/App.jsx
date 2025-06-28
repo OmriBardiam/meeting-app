@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import PlayerSelection from './PlayerSelection'
+import TeamSelection from './TeamSelection'
 import Dashboard from './Dashboard'
 import Settings from './Settings'
 import './App.css'
@@ -18,6 +18,7 @@ console.log('API Base URL:', API_BASE);
 
 function App() {
   const [selectedPlayer, setSelectedPlayer] = useState(() => localStorage.getItem('selectedPlayer') || null);
+  const [selectedTeam, setSelectedTeam] = useState(() => localStorage.getItem('selectedTeam') || null);
   const [gameState, setGameState] = useState(null);
   const [loading, setLoading] = useState(true);
   const [currentView, setCurrentView] = useState('dashboard'); // 'dashboard' or 'settings'
@@ -60,6 +61,10 @@ function App() {
     localStorage.setItem('selectedPlayer', selectedPlayer || '');
   }, [selectedPlayer]);
 
+  useEffect(() => {
+    localStorage.setItem('selectedTeam', selectedTeam || '');
+  }, [selectedTeam]);
+
   function handlePlayerSelect(name) {
     setSelectedPlayer(name);
     setCurrentView('dashboard');
@@ -69,8 +74,19 @@ function App() {
 
   function handleLogout() {
     setSelectedPlayer(null);
+    setSelectedTeam(null);
     setCurrentView('dashboard');
     localStorage.removeItem('selectedPlayer');
+    localStorage.removeItem('selectedTeam');
+    localStorage.removeItem('teamPassword');
+  }
+
+  function handleChangeTeam() {
+    setSelectedPlayer(null);
+    setSelectedTeam(null);
+    localStorage.removeItem('selectedPlayer');
+    localStorage.removeItem('selectedTeam');
+    localStorage.removeItem('teamPassword');
   }
 
   function handleOpenSettings() {
@@ -107,8 +123,8 @@ function App() {
     );
   }
 
-  if (!selectedPlayer) {
-    return <PlayerSelection onSelectPlayer={handlePlayerSelect} />
+  if (!selectedPlayer || !selectedTeam) {
+    return <TeamSelection onSelectPlayer={handlePlayerSelect} />
   }
 
   if (currentView === 'settings') {
@@ -130,6 +146,7 @@ function App() {
         onLogout={handleLogout} 
         onScoreUpdate={fetchGameState}
         onOpenSettings={handleOpenSettings}
+        onChangeTeam={handleChangeTeam}
       />
     </div>
   );

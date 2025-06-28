@@ -33,7 +33,7 @@ function getTeamByPlayer(player, teams) {
   return null;
 }
 
-function Dashboard({ player, gameState, onLogout, onScoreUpdate, onOpenSettings }) {
+function Dashboard({ player, gameState, onLogout, onScoreUpdate, onOpenSettings, onChangeTeam }) {
   const team = getTeamByPlayer(player, gameState.teams);
   if (!team) return <div>Team not found.</div>;
   const isAdmin = player === team.admin;
@@ -229,6 +229,27 @@ function Dashboard({ player, gameState, onLogout, onScoreUpdate, onOpenSettings 
             ⚙️
           </button>
         )}
+
+        {/* Change Team Button */}
+        <button 
+          onClick={onChangeTeam}
+          style={{
+            position: 'absolute',
+            bottom: '0.5rem',
+            right: '0.5rem',
+            background: '#ff9800',
+            color: 'white',
+            border: 'none',
+            borderRadius: 8,
+            padding: '0.3rem 0.6rem',
+            fontSize: '0.7rem',
+            cursor: 'pointer',
+            fontWeight: 600,
+            boxShadow: '0 1px 4px #0002'
+          }}
+        >
+          🔄
+        </button>
         
         <h1 style={{ color: team.color, fontWeight: 800, fontSize: '1.4rem', margin: 0, textShadow: '0 2px 8px #0001' }}>🏆 Drunksters</h1>
         <h2 style={{ color: '#222', fontWeight: 700, fontSize: '1.05rem', margin: '0.4rem 0 0.7rem 0' }}>Welcome, {player}!</h2>
