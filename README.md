@@ -2,6 +2,8 @@
 
 A full-stack web application for team-based meeting games with real-time scoring and quests.
 
+<!-- Railway deployment test - 2024 -->
+
 ## 🎮 Features
 
 - **Team Management**: Two teams with customizable members and colors
