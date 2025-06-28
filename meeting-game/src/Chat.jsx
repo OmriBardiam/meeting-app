@@ -1,15 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 
-  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-    ? 'http://localhost:3001' 
-    : 'https://meeting-app-backend-hh3f.onrender.com');
+// WebSocket URL configuration
+const WS_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+  ? 'http://localhost:3001' 
+  : 'https://meeting-app-backend-hh3f.onrender.com';
 
 function Chat({ player, teamName, teamColor }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [socket, setSocket] = useState(null);
+  const [connectionStatus, setConnectionStatus] = useState('connecting');
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -17,24 +18,48 @@ function Chat({ player, teamName, teamColor }) {
   };
 
   useEffect(() => {
+    console.log('Connecting to WebSocket at:', WS_URL);
+    
     // Connect to WebSocket
-    const newSocket = io(API_BASE);
-    setSocket(newSocket);
+    const newSocket = io(WS_URL, {
+      transports: ['websocket', 'polling'],
+      timeout: 20000,
+    });
 
-    // Join team room
-    newSocket.emit('join-team', { player, teamName });
+    // Connection event handlers
+    newSocket.on('connect', () => {
+      console.log('WebSocket connected');
+      setConnectionStatus('connected');
+      
+      // Join team room
+      newSocket.emit('join-team', { player, teamName });
+    });
 
-    // Listen for chat history
+    newSocket.on('disconnect', () => {
+      console.log('WebSocket disconnected');
+      setConnectionStatus('disconnected');
+    });
+
+    newSocket.on('connect_error', (error) => {
+      console.error('WebSocket connection error:', error);
+      setConnectionStatus('error');
+    });
+
+    // Chat event handlers
     newSocket.on('chat-history', (history) => {
+      console.log('Received chat history:', history);
       setMessages(history);
     });
 
-    // Listen for new messages
     newSocket.on('new-message', (message) => {
+      console.log('Received new message:', message);
       setMessages(prev => [...prev, message]);
     });
 
+    setSocket(newSocket);
+
     return () => {
+      console.log('Cleaning up WebSocket connection');
       newSocket.close();
     };
   }, [player, teamName]);
@@ -84,9 +109,28 @@ function Chat({ player, teamName, teamColor }) {
         borderRadius: '16px 16px 0 0',
         fontWeight: 700,
         textAlign: 'center',
-        fontSize: '1.1rem'
+        fontSize: '1.1rem',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center'
       }}>
-        💬 Team Chat
+        <span>💬 Team Chat</span>
+        <div style={{
+          fontSize: '0.8rem',
+          opacity: 0.8,
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.3rem'
+        }}>
+          <div style={{
+            width: '8px',
+            height: '8px',
+            borderRadius: '50%',
+            background: connectionStatus === 'connected' ? '#4CAF50' : 
+                       connectionStatus === 'connecting' ? '#FFC107' : '#F44336'
+          }}></div>
+          {connectionStatus}
+        </div>
       </div>
 
       {/* Messages Area */}

@@ -58,17 +58,21 @@ io.on('connection', (socket) => {
 
   // Join team room
   socket.on('join-team', ({ player, teamName }) => {
+    console.log(`Join team request: ${player} wants to join ${teamName}`);
     socket.join(teamName);
     socket.player = player;
     socket.teamName = teamName;
     console.log(`${player} joined ${teamName}`);
     
     // Send existing chat messages
-    socket.emit('chat-history', teamChats[teamName] || []);
+    const chatHistory = teamChats[teamName] || [];
+    console.log(`Sending ${chatHistory.length} messages to ${player}`);
+    socket.emit('chat-history', chatHistory);
   });
 
   // Handle chat messages
   socket.on('send-message', ({ message, player, teamName }) => {
+    console.log(`Message from ${player} in ${teamName}: ${message}`);
     const chatMessage = {
       id: Date.now(),
       player,
@@ -89,6 +93,7 @@ io.on('connection', (socket) => {
     }
     
     // Broadcast to team
+    console.log(`Broadcasting message to ${teamName}`);
     io.to(teamName).emit('new-message', chatMessage);
   });
 
