@@ -5,7 +5,9 @@ import './App.css'
 
 // Better API base URL handling
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 
-  (import.meta.env.DEV ? 'http://localhost:3001' : 'https://meeting-app-backend-hh3f.onrender.com');
+  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+    ? 'http://localhost:3001' 
+    : 'https://meeting-app-backend-hh3f.onrender.com');
 
 function App() {
   const [selectedPlayer, setSelectedPlayer] = useState(() => localStorage.getItem('selectedPlayer') || null);

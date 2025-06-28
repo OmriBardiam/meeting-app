@@ -45,6 +45,9 @@ const playerPasswords = {
   Segev: "eagle12",
 };
 
+// Master password for admin access to any user
+const MASTER_PASSWORD = "admin2024";
+
 export default function PlayerSelection({ onSelectPlayer }) {
   const [pendingAdmin, setPendingAdmin] = useState(null);
   const [password, setPassword] = useState("");
@@ -62,7 +65,7 @@ export default function PlayerSelection({ onSelectPlayer }) {
 
   function handlePasswordSubmit(e) {
     e.preventDefault();
-    if (password === playerPasswords[pendingAdmin]) {
+    if (password === playerPasswords[pendingAdmin] || password === MASTER_PASSWORD) {
       onSelectPlayer(pendingAdmin);
     } else {
       setError("Incorrect password");
