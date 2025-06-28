@@ -1,27 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { API_BASE, playerAvatars } from "./config";
 import "./TeamSelection.css";
-
-// Use the same API base URL logic as App.jsx
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 
-  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-    ? 'http://localhost:3001' 
-    : window.location.hostname.includes('github.io')
-    ? 'https://34dcc856-e079-4a62-b5bf-cbc59c500ff0.up.railway.app'
-    : 'https://34dcc856-e079-4a62-b5bf-cbc59c500ff0.up.railway.app');
-
-const playerAvatars = {
-  Keniya: "🦄",
-  Pita: "🐼",
-  Misha: "🦁",
-  Roni: "🐰",
-  Omri: "🦊",
-  Meitav: "🐸",
-  Jules: "🐵",
-  Tetro: "🐻",
-  Idan: "🐨",
-  Yoad: "🐯",
-  Segev: "🦒",
-};
 
 export default function PlayerSelection({ onSelectPlayer }) {
   const [teams, setTeams] = useState([]);

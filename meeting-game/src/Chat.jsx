@@ -1,23 +1,16 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
-
-// Use the same API base URL logic as App.jsx
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 
-  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-    ? 'http://localhost:3001' 
-    : window.location.hostname.includes('github.io')
-    ? 'https://34dcc856-e079-4a62-b5bf-cbc59c500ff0.up.railway.app'
-    : 'https://34dcc856-e079-4a62-b5bf-cbc59c500ff0.up.railway.app');
+import { API_BASE } from './config';
 
 // Debug logging
 console.log('WebSocket URL:', API_BASE);
 console.log('Current hostname:', window.location.hostname);
 
-function Chat({ player, teamName, teamColor }) {
+export default function Chat({ player, teamName, teamColor }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [socket, setSocket] = useState(null);
-  const [connectionStatus, setConnectionStatus] = useState('connecting');
+  const [isConnected, setIsConnected] = useState(false);
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -36,7 +29,7 @@ function Chat({ player, teamName, teamColor }) {
     // Connection event handlers
     newSocket.on('connect', () => {
       console.log('WebSocket connected successfully');
-      setConnectionStatus('connected');
+      setIsConnected(true);
       
       // Join team room
       newSocket.emit('join-team', { player, teamName });
@@ -44,12 +37,12 @@ function Chat({ player, teamName, teamColor }) {
 
     newSocket.on('disconnect', (reason) => {
       console.log('WebSocket disconnected:', reason);
-      setConnectionStatus('disconnected');
+      setIsConnected(false);
     });
 
     newSocket.on('connect_error', (error) => {
       console.error('WebSocket connection error:', error);
-      setConnectionStatus('error');
+      setIsConnected(false);
     });
 
     // Chat event handlers
@@ -96,11 +89,7 @@ function Chat({ player, teamName, teamColor }) {
   };
 
   const getConnectionStatusColor = () => {
-    switch (connectionStatus) {
-      case 'connected': return '#4CAF50';
-      case 'connecting': return '#FFC107';
-      default: return '#F44336';
-    }
+    return isConnected ? '#4CAF50' : '#F44336';
   };
 
   return (
@@ -143,7 +132,7 @@ function Chat({ player, teamName, teamColor }) {
             borderRadius: '50%',
             background: getConnectionStatusColor()
           }}></div>
-          {connectionStatus}
+          {isConnected ? 'Connected' : 'Disconnected'}
         </div>
       </div>
 
@@ -222,6 +211,4 @@ function Chat({ player, teamName, teamColor }) {
       </form>
     </div>
   );
-}
-
-export default Chat; 
+} 

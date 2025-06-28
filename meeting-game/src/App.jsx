@@ -2,15 +2,8 @@ import { useState, useEffect } from 'react'
 import TeamSelection from './TeamSelection'
 import Dashboard from './Dashboard'
 import Settings from './Settings'
+import { API_BASE, APP_NAME } from './config'
 import './App.css'
-
-// Better API base URL handling
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 
-  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-    ? 'http://localhost:3001' 
-    : window.location.hostname.includes('github.io')
-    ? 'https://34dcc856-e079-4a62-b5bf-cbc59c500ff0.up.railway.app'
-    : 'https://34dcc856-e079-4a62-b5bf-cbc59c500ff0.up.railway.app');
 
 // Debug logging
 console.log('Current hostname:', window.location.hostname);
