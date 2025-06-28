@@ -1,5 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { API_BASE } from './config';
+import { API_BASE, LAYOUT } from './config';
+
+// Responsive utility function
+const getResponsiveStyles = () => {
+  const isMobile = window.innerWidth <= 480;
+  const isTablet = window.innerWidth <= 768;
+  
+  return {
+    containerMaxWidth: isMobile ? LAYOUT.MOBILE_MAX_WIDTH : isTablet ? LAYOUT.TABLET_MAX_WIDTH : LAYOUT.DESKTOP_MAX_WIDTH,
+    padding: isMobile ? LAYOUT.MOBILE_PADDING : isTablet ? LAYOUT.TABLET_PADDING : LAYOUT.DESKTOP_PADDING,
+    isMobile,
+    isTablet
+  };
+};
 
 function Settings({ player, gameState, onBack, onUpdateGameState }) {
   const [settings, setSettings] = useState({
@@ -29,6 +42,14 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(true);
+  const [responsiveStyles, setResponsiveStyles] = useState(getResponsiveStyles());
+
+  // Update responsive styles on window resize
+  useEffect(() => {
+    const handleResize = () => setResponsiveStyles(getResponsiveStyles());
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Get player's team for theming
   const getPlayerTeam = () => {
@@ -67,35 +88,63 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
 
   const isAdmin = player === 'Omri' || player === 'Yoad';
 
+  // Common styles
+  const containerStyle = {
+    minHeight: '100vh',
+    background: `linear-gradient(135deg, ${playerTeam?.color || '#667eea'}20 0%, ${playerTeam?.color || '#764ba2'}40 100%)`,
+    padding: responsiveStyles.padding,
+    fontFamily: 'Inter, system-ui, Avenir, Helvetica, Arial, sans-serif',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    width: '100%',
+    boxSizing: 'border-box'
+  };
+
+  const cardStyle = {
+    background: `rgba(255,255,255,${LAYOUT.CARD_BG_OPACITY})`,
+    borderRadius: LAYOUT.BORDER_RADIUS,
+    boxShadow: LAYOUT.CARD_SHADOW,
+    padding: responsiveStyles.padding,
+    border: '1.5px solid #fff',
+    backdropFilter: 'blur(2px)',
+    maxWidth: responsiveStyles.containerMaxWidth,
+    width: '100%',
+    margin: '0 auto'
+  };
+
+  const sectionStyle = {
+    background: `rgba(255,255,255,${LAYOUT.SECTION_BG_OPACITY})`,
+    borderRadius: LAYOUT.SMALL_BORDER_RADIUS,
+    padding: responsiveStyles.isMobile ? '1rem' : '1.5rem',
+    border: '1px solid rgba(255,255,255,0.3)',
+    marginBottom: LAYOUT.SECTION_GAP
+  };
+
+  const buttonStyle = (color = playerTeam?.color || '#667eea') => ({
+    background: color,
+    color: 'white',
+    border: 'none',
+    borderRadius: LAYOUT.SMALL_BORDER_RADIUS,
+    padding: responsiveStyles.isMobile ? '0.5rem 0.8rem' : '0.5rem 1rem',
+    cursor: 'pointer',
+    fontWeight: 600,
+    fontSize: responsiveStyles.isMobile ? '0.9rem' : '1rem',
+    boxShadow: LAYOUT.BUTTON_SHADOW
+  });
+
   if (!isAdmin) {
     return (
-      <div style={{
-        minHeight: '100vh',
-        background: `linear-gradient(135deg, ${playerTeam?.color || '#667eea'}20 0%, ${playerTeam?.color || '#764ba2'}40 100%)`,
-        padding: '2rem',
-        fontFamily: 'Inter, system-ui, Avenir, Helvetica, Arial, sans-serif'
-      }}>
-        <div style={{
-          background: 'rgba(255,255,255,0.85)',
-          borderRadius: 16,
-          boxShadow: '0 2px 12px #0002',
-          padding: '1.5rem',
-          border: '1.5px solid #fff',
-          backdropFilter: 'blur(2px)',
-          maxWidth: 600,
-          margin: '0 auto'
-        }}>
+      <div style={containerStyle}>
+        <div style={cardStyle}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-            <h1 style={{ color: playerTeam?.color || '#667eea', fontWeight: 800, fontSize: '1.8rem', margin: 0 }}>🏆 Drunksters Settings</h1>
-            <button onClick={onBack} style={{
-              background: playerTeam?.color || '#667eea',
-              color: 'white',
-              border: 'none',
-              borderRadius: 8,
-              padding: '0.5rem 1rem',
-              cursor: 'pointer',
-              fontWeight: 600
-            }}>← Back</button>
+            <h1 style={{ 
+              color: playerTeam?.color || '#667eea', 
+              fontWeight: 800, 
+              fontSize: responsiveStyles.isMobile ? '1.5rem' : '1.8rem', 
+              margin: 0 
+            }}>🏆 Drunksters Settings</h1>
+            <button onClick={onBack} style={buttonStyle()}>← Back</button>
           </div>
           <div style={{ textAlign: 'center', padding: '2rem', color: '#666' }}>
             <h2 style={{ color: playerTeam?.color || '#667eea', marginBottom: '1rem' }}>Access Denied</h2>
@@ -108,33 +157,16 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
 
   if (loading) {
     return (
-      <div style={{
-        minHeight: '100vh',
-        background: `linear-gradient(135deg, ${playerTeam?.color || '#667eea'}20 0%, ${playerTeam?.color || '#764ba2'}40 100%)`,
-        padding: '2rem',
-        fontFamily: 'Inter, system-ui, Avenir, Helvetica, Arial, sans-serif'
-      }}>
-        <div style={{
-          background: 'rgba(255,255,255,0.85)',
-          borderRadius: 16,
-          boxShadow: '0 2px 12px #0002',
-          padding: '1.5rem',
-          border: '1.5px solid #fff',
-          backdropFilter: 'blur(2px)',
-          maxWidth: 600,
-          margin: '0 auto'
-        }}>
+      <div style={containerStyle}>
+        <div style={cardStyle}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-            <h1 style={{ color: playerTeam?.color || '#667eea', fontWeight: 800, fontSize: '1.8rem', margin: 0 }}>🏆 Drunksters Settings</h1>
-            <button onClick={onBack} style={{
-              background: playerTeam?.color || '#667eea',
-              color: 'white',
-              border: 'none',
-              borderRadius: 8,
-              padding: '0.5rem 1rem',
-              cursor: 'pointer',
-              fontWeight: 600
-            }}>← Back</button>
+            <h1 style={{ 
+              color: playerTeam?.color || '#667eea', 
+              fontWeight: 800, 
+              fontSize: responsiveStyles.isMobile ? '1.5rem' : '1.8rem', 
+              margin: 0 
+            }}>🏆 Drunksters Settings</h1>
+            <button onClick={onBack} style={buttonStyle()}>← Back</button>
           </div>
           <div style={{ textAlign: 'center', padding: '2rem', color: '#666' }}>
             Loading settings...
@@ -246,33 +278,16 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
   };
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: `linear-gradient(135deg, ${playerTeam?.color || '#667eea'}20 0%, ${playerTeam?.color || '#764ba2'}40 100%)`,
-      padding: '2rem',
-      fontFamily: 'Inter, system-ui, Avenir, Helvetica, Arial, sans-serif'
-    }}>
-      <div style={{
-        background: 'rgba(255,255,255,0.85)',
-        borderRadius: 16,
-        boxShadow: '0 2px 12px #0002',
-        padding: '1.5rem',
-        border: '1.5px solid #fff',
-        backdropFilter: 'blur(2px)',
-        maxWidth: 800,
-        margin: '0 auto'
-      }}>
+    <div style={containerStyle}>
+      <div style={cardStyle}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-          <h1 style={{ color: playerTeam?.color || '#667eea', fontWeight: 800, fontSize: '1.8rem', margin: 0 }}>🏆 Drunksters Settings</h1>
-          <button onClick={onBack} style={{
-            background: playerTeam?.color || '#667eea',
-            color: 'white',
-            border: 'none',
-            borderRadius: 8,
-            padding: '0.5rem 1rem',
-            cursor: 'pointer',
-            fontWeight: 600
-          }}>← Back</button>
+          <h1 style={{ 
+            color: playerTeam?.color || '#667eea', 
+            fontWeight: 800, 
+            fontSize: responsiveStyles.isMobile ? '1.5rem' : '1.8rem', 
+            margin: 0 
+          }}>🏆 Drunksters Settings</h1>
+          <button onClick={onBack} style={buttonStyle()}>← Back</button>
         </div>
 
         {message && (
@@ -290,44 +305,35 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           {/* Team Management */}
-          <div style={{
-            background: 'rgba(255,255,255,0.7)',
-            borderRadius: 12,
-            padding: '1.5rem',
-            border: '1px solid rgba(255,255,255,0.3)'
-          }}>
+          <div style={sectionStyle}>
             <h2 style={{ color: playerTeam?.color || '#667eea', fontWeight: 700, marginBottom: '1.5rem' }}>Team Management</h2>
             {Object.entries(settings.teams).map(([teamName, team]) => (
-              <div key={teamName} style={{
-                background: 'rgba(255,255,255,0.5)',
-                borderRadius: 8,
-                padding: '1rem',
-                marginBottom: '1rem',
-                border: '1px solid rgba(255,255,255,0.3)'
-              }}>
+              <div key={teamName} style={sectionStyle}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                   <h3 style={{ color: team.color, fontWeight: 700, margin: 0 }}>{teamName}</h3>
                   <button 
                     onClick={() => handleTeamEdit(teamName)}
-                    style={{
-                      background: team.color,
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: 6,
-                      padding: '0.5rem 1rem',
-                      cursor: 'pointer',
-                      fontWeight: 600
-                    }}
+                    style={buttonStyle(team.color)}
                   >
                     {editingTeam === teamName ? 'Done' : 'Edit'}
                   </button>
                 </div>
 
                 {editingTeam === teamName && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: LAYOUT.ITEM_GAP }}>
                     {/* Team Color */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                      <label style={{ fontWeight: 600, minWidth: '120px' }}>Team Color:</label>
+                    <div style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: LAYOUT.SMALL_GAP,
+                      flexDirection: responsiveStyles.isMobile ? 'column' : 'row',
+                      alignItems: responsiveStyles.isMobile ? 'flex-start' : 'center'
+                    }}>
+                      <label style={{ 
+                        fontWeight: 600, 
+                        minWidth: responsiveStyles.isMobile ? 'auto' : '120px',
+                        marginBottom: responsiveStyles.isMobile ? '0.5rem' : '0'
+                      }}>Team Color:</label>
                       <input
                         type="color"
                         value={team.color}
@@ -338,38 +344,85 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
                             [teamName]: { ...team, color: e.target.value }
                           }
                         }))}
-                        style={{ width: '50px', height: '30px', border: 'none', borderRadius: 4 }}
+                        style={{ 
+                          width: '50px', 
+                          height: '30px', 
+                          border: 'none', 
+                          borderRadius: 4,
+                          alignSelf: responsiveStyles.isMobile ? 'flex-start' : 'center'
+                        }}
                       />
                     </div>
 
                     {/* Team Password */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                      <label style={{ fontWeight: 600, minWidth: '120px' }}>Team Password:</label>
+                    <div style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: LAYOUT.SMALL_GAP,
+                      flexDirection: responsiveStyles.isMobile ? 'column' : 'row',
+                      alignItems: responsiveStyles.isMobile ? 'flex-start' : 'center'
+                    }}>
+                      <label style={{ 
+                        fontWeight: 600, 
+                        minWidth: responsiveStyles.isMobile ? 'auto' : '120px',
+                        marginBottom: responsiveStyles.isMobile ? '0.5rem' : '0'
+                      }}>Team Password:</label>
                       <input
                         type="text"
                         value={team.password}
                         onChange={(e) => handleChangePassword(teamName, 'password', e.target.value)}
                         placeholder="Team password"
-                        style={{ flex: 1, padding: '0.5rem', borderRadius: 6, border: '1px solid #ccc' }}
+                        style={{ 
+                          flex: 1, 
+                          padding: '0.5rem', 
+                          borderRadius: 6, 
+                          border: '1px solid #ccc',
+                          width: responsiveStyles.isMobile ? '100%' : 'auto'
+                        }}
                       />
                     </div>
 
                     {/* Admin Password */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                      <label style={{ fontWeight: 600, minWidth: '120px' }}>Admin Password:</label>
+                    <div style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: LAYOUT.SMALL_GAP,
+                      flexDirection: responsiveStyles.isMobile ? 'column' : 'row',
+                      alignItems: responsiveStyles.isMobile ? 'flex-start' : 'center'
+                    }}>
+                      <label style={{ 
+                        fontWeight: 600, 
+                        minWidth: responsiveStyles.isMobile ? 'auto' : '120px',
+                        marginBottom: responsiveStyles.isMobile ? '0.5rem' : '0'
+                      }}>Admin Password:</label>
                       <input
                         type="text"
                         value={team.adminPassword}
                         onChange={(e) => handleChangePassword(teamName, 'adminPassword', e.target.value)}
                         placeholder="Admin password"
-                        style={{ flex: 1, padding: '0.5rem', borderRadius: 6, border: '1px solid #ccc' }}
+                        style={{ 
+                          flex: 1, 
+                          padding: '0.5rem', 
+                          borderRadius: 6, 
+                          border: '1px solid #ccc',
+                          width: responsiveStyles.isMobile ? '100%' : 'auto'
+                        }}
                       />
                     </div>
 
                     {/* Team Members */}
                     <div>
-                      <label style={{ fontWeight: 600, display: 'block', marginBottom: '0.5rem' }}>Team Members:</label>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1rem' }}>
+                      <label style={{ 
+                        fontWeight: 600, 
+                        display: 'block', 
+                        marginBottom: '0.5rem' 
+                      }}>Team Members:</label>
+                      <div style={{ 
+                        display: 'flex', 
+                        flexWrap: 'wrap', 
+                        gap: LAYOUT.SMALL_GAP, 
+                        marginBottom: LAYOUT.ITEM_GAP 
+                      }}>
                         {team.members.map(member => (
                           <div key={member} style={{
                             background: '#fff',
@@ -378,7 +431,8 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
                             display: 'flex',
                             alignItems: 'center',
                             gap: '0.5rem',
-                            border: '1px solid #eee'
+                            border: '1px solid #eee',
+                            fontSize: responsiveStyles.isMobile ? '0.9rem' : '1rem'
                           }}>
                             <span>{member}</span>
                             <button 
@@ -403,24 +457,28 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
                           </div>
                         ))}
                       </div>
-                      <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <div style={{ 
+                        display: 'flex', 
+                        gap: LAYOUT.SMALL_GAP,
+                        flexDirection: responsiveStyles.isMobile ? 'column' : 'row'
+                      }}>
                         <input
                           type="text"
                           value={newMember}
                           onChange={(e) => setNewMember(e.target.value)}
                           placeholder="New member name"
                           onKeyPress={(e) => e.key === 'Enter' && handleAddMember(teamName)}
-                          style={{ flex: 1, padding: '0.5rem', borderRadius: 6, border: '1px solid #ccc' }}
+                          style={{ 
+                            flex: 1, 
+                            padding: '0.5rem', 
+                            borderRadius: 6, 
+                            border: '1px solid #ccc',
+                            width: responsiveStyles.isMobile ? '100%' : 'auto'
+                          }}
                         />
-                        <button onClick={() => handleAddMember(teamName)} style={{
-                          background: team.color,
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: 6,
-                          padding: '0.5rem 1rem',
-                          cursor: 'pointer',
-                          fontWeight: 600
-                        }}>Add</button>
+                        <button onClick={() => handleAddMember(teamName)} style={buttonStyle(team.color)}>
+                          Add
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -430,39 +488,79 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
           </div>
 
           {/* Game Settings */}
-          <div style={{
-            background: 'rgba(255,255,255,0.7)',
-            borderRadius: 12,
-            padding: '1.5rem',
-            border: '1px solid rgba(255,255,255,0.3)'
-          }}>
+          <div style={sectionStyle}>
             <h2 style={{ color: playerTeam?.color || '#667eea', fontWeight: 700, marginBottom: '1.5rem' }}>Game Settings</h2>
             
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
-              <label style={{ fontWeight: 600, minWidth: '120px' }}>Quest Points:</label>
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: LAYOUT.SMALL_GAP, 
+              marginBottom: LAYOUT.ITEM_GAP,
+              flexDirection: responsiveStyles.isMobile ? 'column' : 'row',
+              alignItems: responsiveStyles.isMobile ? 'flex-start' : 'center'
+            }}>
+              <label style={{ 
+                fontWeight: 600, 
+                minWidth: responsiveStyles.isMobile ? 'auto' : '120px',
+                marginBottom: responsiveStyles.isMobile ? '0.5rem' : '0'
+              }}>Quest Points:</label>
               <input
                 type="number"
                 value={settings.questPoints}
                 onChange={(e) => setSettings(prev => ({ ...prev, questPoints: parseInt(e.target.value) || 0 }))}
                 min="1"
                 max="100"
-                style={{ padding: '0.5rem', borderRadius: 6, border: '1px solid #ccc', width: '100px' }}
+                style={{ 
+                  padding: '0.5rem', 
+                  borderRadius: 6, 
+                  border: '1px solid #ccc', 
+                  width: responsiveStyles.isMobile ? '100%' : '100px'
+                }}
               />
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
-              <label style={{ fontWeight: 600, minWidth: '120px' }}>Master Password:</label>
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: LAYOUT.SMALL_GAP, 
+              marginBottom: LAYOUT.ITEM_GAP,
+              flexDirection: responsiveStyles.isMobile ? 'column' : 'row',
+              alignItems: responsiveStyles.isMobile ? 'flex-start' : 'center'
+            }}>
+              <label style={{ 
+                fontWeight: 600, 
+                minWidth: responsiveStyles.isMobile ? 'auto' : '120px',
+                marginBottom: responsiveStyles.isMobile ? '0.5rem' : '0'
+              }}>Master Password:</label>
               <input
                 type="text"
                 value={settings.masterPassword}
                 onChange={(e) => setSettings(prev => ({ ...prev, masterPassword: e.target.value }))}
                 placeholder="Master admin password"
-                style={{ flex: 1, padding: '0.5rem', borderRadius: 6, border: '1px solid #ccc' }}
+                style={{ 
+                  flex: 1, 
+                  padding: '0.5rem', 
+                  borderRadius: 6, 
+                  border: '1px solid #ccc',
+                  width: responsiveStyles.isMobile ? '100%' : 'auto'
+                }}
               />
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600 }}>
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: LAYOUT.SMALL_GAP,
+              flexDirection: responsiveStyles.isMobile ? 'column' : 'row',
+              alignItems: responsiveStyles.isMobile ? 'flex-start' : 'center'
+            }}>
+              <label style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '0.5rem', 
+                fontWeight: 600,
+                marginBottom: responsiveStyles.isMobile ? '0.5rem' : '0'
+              }}>
                 <input
                   type="checkbox"
                   checked={settings.chatEnabled}
@@ -475,19 +573,20 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
           </div>
 
           {/* Action Buttons */}
-          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+          <div style={{ 
+            display: 'flex', 
+            gap: LAYOUT.ITEM_GAP, 
+            justifyContent: 'center',
+            flexDirection: responsiveStyles.isMobile ? 'column' : 'row'
+          }}>
             <button 
               onClick={handleSaveSettings} 
               disabled={saving}
               style={{
-                background: playerTeam?.color || '#667eea',
-                color: 'white',
-                border: 'none',
-                borderRadius: 8,
-                padding: '0.75rem 2rem',
-                cursor: 'pointer',
-                fontWeight: 600,
-                fontSize: '1rem'
+                ...buttonStyle(),
+                padding: responsiveStyles.isMobile ? '0.75rem 1.5rem' : '0.75rem 2rem',
+                fontSize: responsiveStyles.isMobile ? '0.9rem' : '1rem',
+                width: responsiveStyles.isMobile ? '100%' : 'auto'
               }}
             >
               {saving ? 'Saving...' : 'Save Settings'}
@@ -495,14 +594,10 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
             <button 
               onClick={handleResetToDefault}
               style={{
-                background: '#ff9800',
-                color: 'white',
-                border: 'none',
-                borderRadius: 8,
-                padding: '0.75rem 2rem',
-                cursor: 'pointer',
-                fontWeight: 600,
-                fontSize: '1rem'
+                ...buttonStyle('#ff9800'),
+                padding: responsiveStyles.isMobile ? '0.75rem 1.5rem' : '0.75rem 2rem',
+                fontSize: responsiveStyles.isMobile ? '0.9rem' : '1rem',
+                width: responsiveStyles.isMobile ? '100%' : 'auto'
               }}
             >
               Reset to Default
