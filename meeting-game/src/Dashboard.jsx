@@ -204,7 +204,7 @@ function Dashboard({ player, gameState, onLogout, onScoreUpdate, onOpenSettings 
             boxShadow: '0 1px 4px #0002'
           }}
         >
-          ��
+          👤
         </button>
 
         {/* Settings Button for Admins */}
