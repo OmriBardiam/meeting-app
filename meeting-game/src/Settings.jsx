@@ -38,15 +38,33 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
   const [newMember, setNewMember] = useState('');
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(true);
 
+  // Load current settings from backend
   useEffect(() => {
-    if (gameState) {
-      setSettings(prev => ({
-        ...prev,
-        teams: gameState.teams
-      }));
+    async function loadSettings() {
+      try {
+        const response = await fetch(`${API_BASE}/settings`);
+        if (response.ok) {
+          const data = await response.json();
+          setSettings({
+            teams: data.teams,
+            questPoints: data.settings?.questPoints || 10,
+            masterPassword: data.settings?.masterPassword || "admin2024",
+            autoSave: data.settings?.autoSave !== false,
+            chatEnabled: data.settings?.chatEnabled !== false,
+            realTimeUpdates: data.settings?.realTimeUpdates !== false
+          });
+        }
+      } catch (error) {
+        console.error('Error loading settings:', error);
+      } finally {
+        setLoading(false);
+      }
     }
-  }, [gameState]);
+    
+    loadSettings();
+  }, []);
 
   const isAdmin = player === 'Omri' || player === 'Yoad';
 
@@ -60,6 +78,20 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
         <div className="access-denied">
           <h2>Access Denied</h2>
           <p>Only team admins can access settings.</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="settings-container">
+        <div className="settings-header">
+          <h1>🏆 Drunksters Settings</h1>
+          <button onClick={onBack} className="back-button">← Back</button>
+        </div>
+        <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+          Loading settings...
         </div>
       </div>
     );
@@ -81,9 +113,11 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
       
       if (response.ok) {
         setMessage('Settings saved successfully!');
+        // Update the game state to reflect changes
         onUpdateGameState();
       } else {
-        setMessage('Failed to save settings');
+        const errorData = await response.json();
+        setMessage(`Failed to save settings: ${errorData.error || 'Unknown error'}`);
       }
     } catch (error) {
       setMessage('Error saving settings');
@@ -137,6 +171,33 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
         }
       }
     }));
+  };
+
+  const handleResetToDefault = () => {
+    const defaultSettings = {
+      teams: {
+        "Team Omri": {
+          color: '#1976d2',
+          members: ["Keniya", "Pita", "Misha", "Roni", "Omri", "Segev"],
+          password: "teamomri2024",
+          adminPassword: "omriadmin2024",
+          admin: "Omri"
+        },
+        "Team Yoad": {
+          color: '#d32f2f',
+          members: ["Meitav", "Jules", "Tetro", "Idan", "Yoad"],
+          password: "teamyoad2024",
+          adminPassword: "yoadadmin2024",
+          admin: "Yoad"
+        }
+      },
+      questPoints: 10,
+      masterPassword: "admin2024",
+      autoSave: true,
+      chatEnabled: true,
+      realTimeUpdates: true
+    };
+    setSettings(defaultSettings);
   };
 
   return (
@@ -312,29 +373,7 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
           </button>
           
           <button 
-            onClick={() => setSettings({
-              teams: {
-                "Team Omri": {
-                  color: '#1976d2',
-                  members: ["Keniya", "Pita", "Misha", "Roni", "Omri", "Segev"],
-                  password: "teamomri2024",
-                  adminPassword: "omriadmin2024",
-                  admin: "Omri"
-                },
-                "Team Yoad": {
-                  color: '#d32f2f',
-                  members: ["Meitav", "Jules", "Tetro", "Idan", "Yoad"],
-                  password: "teamyoad2024",
-                  adminPassword: "yoadadmin2024",
-                  admin: "Yoad"
-                }
-              },
-              questPoints: 10,
-              masterPassword: "admin2024",
-              autoSave: true,
-              chatEnabled: true,
-              realTimeUpdates: true
-            })} 
+            onClick={handleResetToDefault} 
             className="reset-button"
           >
             Reset to Default

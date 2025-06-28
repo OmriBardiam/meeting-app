@@ -1,5 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./PlayerSelection.css";
+
+// Use the same API base URL logic as App.jsx
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 
+  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+    ? 'http://localhost:3001' 
+    : window.location.hostname.includes('github.io')
+    ? 'https://meeting-app-backend-hh3f.onrender.com'
+    : 'http://192.168.1.243:3001');
 
 const playerAvatars = {
   Keniya: "🦄",
@@ -15,30 +23,73 @@ const playerAvatars = {
   Segev: "🦒",
 };
 
-const teams = [
-  {
-    name: "Team Omri",
-    color: "#1976d2",
-    members: ["Keniya", "Pita", "Misha", "Roni", "Omri", "Segev"],
-    password: "teamomri2024",
-    adminPassword: "omriadmin2024"
-  },
-  {
-    name: "Team Yoad",
-    color: "#d32f2f",
-    members: ["Meitav", "Jules", "Tetro", "Idan", "Yoad"],
-    password: "teamyoad2024",
-    adminPassword: "yoadadmin2024"
-  },
-];
-
 // Master password for admin access to any user
 const MASTER_PASSWORD = "admin2024";
 
 export default function PlayerSelection({ onSelectPlayer }) {
+  const [teams, setTeams] = useState([]);
   const [pendingPlayer, setPendingPlayer] = useState(null);
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  // Load teams from backend
+  useEffect(() => {
+    async function loadTeams() {
+      try {
+        const response = await fetch(`${API_BASE}/settings`);
+        if (response.ok) {
+          const data = await response.json();
+          const teamsArray = Object.entries(data.teams).map(([name, team]) => ({
+            name,
+            ...team
+          }));
+          setTeams(teamsArray);
+        } else {
+          // Fallback to default teams if API fails
+          setTeams([
+            {
+              name: "Team Omri",
+              color: "#1976d2",
+              members: ["Keniya", "Pita", "Misha", "Roni", "Omri", "Segev"],
+              password: "teamomri2024",
+              adminPassword: "omriadmin2024"
+            },
+            {
+              name: "Team Yoad",
+              color: "#d32f2f",
+              members: ["Meitav", "Jules", "Tetro", "Idan", "Yoad"],
+              password: "teamyoad2024",
+              adminPassword: "yoadadmin2024"
+            },
+          ]);
+        }
+      } catch (error) {
+        console.error('Error loading teams:', error);
+        // Fallback to default teams
+        setTeams([
+          {
+            name: "Team Omri",
+            color: "#1976d2",
+            members: ["Keniya", "Pita", "Misha", "Roni", "Omri", "Segev"],
+            password: "teamomri2024",
+            adminPassword: "omriadmin2024"
+          },
+          {
+            name: "Team Yoad",
+            color: "#d32f2f",
+            members: ["Meitav", "Jules", "Tetro", "Idan", "Yoad"],
+            password: "teamyoad2024",
+            adminPassword: "yoadadmin2024"
+          },
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    loadTeams();
+  }, []);
 
   function handlePlayerClick(name) {
     setPendingPlayer(name);
@@ -68,6 +119,17 @@ export default function PlayerSelection({ onSelectPlayer }) {
     } else {
       setError("Incorrect password");
     }
+  }
+
+  if (loading) {
+    return (
+      <div className="player-selection-container fancy-bg">
+        <h1 className="player-title">🏆 Drunksters</h1>
+        <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+          Loading teams...
+        </div>
+      </div>
+    );
   }
 
   if (pendingPlayer) {
