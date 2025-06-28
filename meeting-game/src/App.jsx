@@ -81,7 +81,18 @@ function App() {
   const teamColor = selectedPlayer && gameState ? getTeamByPlayer(selectedPlayer, gameState.teams) : '#666';
 
   if (loading || !gameState) {
-    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Loading...</div>;
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh',
+        fontSize: '1.2rem',
+        color: '#666'
+      }}>
+        Loading Drunksters...
+      </div>
+    );
   }
 
   if (!selectedPlayer) {
@@ -89,7 +100,7 @@ function App() {
   }
 
   return (
-    <div>
+    <div className="App">
       <Dashboard 
         player={selectedPlayer} 
         gameState={gameState} 

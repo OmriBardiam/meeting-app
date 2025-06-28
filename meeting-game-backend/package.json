@@ -1,13 +1,13 @@
 {
-  "name": "meeting-game-backend",
+  "name": "drunksters-backend",
   "version": "1.0.0",
-  "description": "Backend for meeting game app",
+  "description": "Backend for Drunksters team quest game",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js"
   },
-  "keywords": [],
+  "keywords": ["drunksters", "game", "team", "quest"],
   "author": "",
   "license": "ISC",
   "type": "commonjs",

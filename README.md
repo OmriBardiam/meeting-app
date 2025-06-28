@@ -1,6 +1,6 @@
-# Meeting Game App
+# 🏆 Drunksters - Team Quest Game
 
-A full-stack web application for team-based meeting games with real-time scoring and quests.
+A full-stack web application for team-based questing with real-time scoring and chat.
 
 <!-- Railway deployment test - 2024 -->
 
@@ -167,4 +167,4 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ---
 
-**Happy gaming! 🎮✨**
+**Happy questing! 🏆✨**

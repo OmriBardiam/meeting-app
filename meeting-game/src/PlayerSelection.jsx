@@ -48,73 +48,41 @@ const playerPasswords = {
 // Master password for admin access to any user
 const MASTER_PASSWORD = "admin2024";
 
-export default function PlayerSelection({ onSelectPlayer }) {
-  const [pendingAdmin, setPendingAdmin] = useState(null);
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-
-  function handlePlayerClick(name) {
-    if (playerPasswords[name]) {
-      setPendingAdmin(name);
-      setPassword("");
-      setError("");
-    } else {
-      onSelectPlayer(name);
-    }
+export default function PlayerSelection({ gameState, onPlayerSelect }) {
+  if (!gameState) {
+    return <div>Loading...</div>;
   }
 
-  function handlePasswordSubmit(e) {
-    e.preventDefault();
-    if (password === playerPasswords[pendingAdmin] || password === MASTER_PASSWORD) {
-      onSelectPlayer(pendingAdmin);
-    } else {
-      setError("Incorrect password");
-    }
-  }
-
-  if (pendingAdmin) {
-    return (
-      <div className="player-selection-container fancy-bg">
-        <h1 className="player-title">Enter password for {pendingAdmin}</h1>
-        <form onSubmit={handlePasswordSubmit} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
-          <input
-            type="password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            placeholder="Password"
-            style={{ fontSize: '1.2rem', padding: '0.5rem', borderRadius: 8, border: '1px solid #ccc' }}
-            autoFocus
-          />
-          <button type="submit" className="player-button card-style" style={{ background: teams.find(t => t.members.includes(pendingAdmin)).color }}>
-            Join Game
-          </button>
-          {error && <div style={{ color: 'red' }}>{error}</div>}
-        </form>
-        <button style={{ marginTop: '1rem', background: '#888', color: 'white', border: 'none', borderRadius: 8, padding: '0.5rem 1rem' }} onClick={() => setPendingAdmin(null)}>
-          Back
-        </button>
-      </div>
-    );
-  }
+  const allPlayers = [];
+  Object.entries(gameState.teams).forEach(([teamName, team]) => {
+    team.members.forEach(player => {
+      allPlayers.push({ name: player, team: teamName, color: team.color });
+    });
+  });
 
   return (
-    <div className="player-selection-container fancy-bg">
-      <h1 className="player-title">Welcome to the Meeting Game!</h1>
-      <div className="player-subtitle">Pick your player to join the fun 🎉</div>
-      <div className="team-groups">
-        {teams.map((team) => (
-          <div key={team.name} className="team-group">
-            <div className="team-label" style={{ color: team.color }}>{team.name}</div>
-            <div className="player-list">
-              {team.members.map((name) => (
+    <div className="player-selection">
+      <div className="header">
+        <h1>🏆 Drunksters</h1>
+        <p>Choose your player to start the quest!</p>
+      </div>
+      
+      <div className="teams-container">
+        {Object.entries(gameState.teams).map(([teamName, team]) => (
+          <div key={teamName} className="team-section">
+            <h2 style={{ color: team.color }}>{teamName}</h2>
+            <div className="players-grid">
+              {team.members.map(player => (
                 <button
-                  key={name}
-                  className="player-button card-style"
-                  style={{ background: team.color, animationDelay: `${Math.random() * 0.2}s` }}
-                  onClick={() => handlePlayerClick(name)}
+                  key={player}
+                  className="player-button"
+                  style={{ 
+                    borderColor: team.color,
+                    backgroundColor: team.color + '20'
+                  }}
+                  onClick={() => onPlayerSelect(player)}
                 >
-                  <span className="player-avatar" aria-label={name}>{playerAvatars[name] || name[0]}</span>
-                  <span className="player-name">{name}</span>
+                  {player}
                 </button>
               ))}
             </div>
