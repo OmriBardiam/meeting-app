@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { API_BASE, playerAvatars } from './config';
+import { API_BASE, getPlayerAvatar } from './config';
 import './TeamSelection.css';
 
 export default function TeamSelection({ onSelectPlayer }) {
@@ -195,7 +195,7 @@ export default function TeamSelection({ onSelectPlayer }) {
               style={{ background: selectedTeam.color, animationDelay: `${Math.random() * 0.2}s` }}
               onClick={() => handleUserSelect(name)}
             >
-              <span className="player-avatar" aria-label={name}>{playerAvatars[name] || name[0]}</span>
+              <span className="player-avatar" aria-label={name}>{getPlayerAvatar(name)}</span>
               <span className="player-name">{name}</span>
             </button>
           ))}

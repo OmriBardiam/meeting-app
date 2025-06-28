@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
-import { WS_BASE } from './config';
+import { WS_BASE, getPlayerAvatar } from './config';
 
 // Debug logging
 console.log('WebSocket URL:', WS_BASE);
@@ -159,8 +159,9 @@ export default function Chat({ player, teamName, teamColor }) {
               maxWidth: '80%',
               wordBreak: 'break-word'
             }}>
-              <div style={{ fontSize: '0.8rem', opacity: 0.8, marginBottom: '0.2rem' }}>
-                {msg.player} • {formatTime(msg.timestamp)}
+              <div style={{ fontSize: '0.8rem', opacity: 0.8, marginBottom: '0.2rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                <span>{getPlayerAvatar(msg.player)}</span>
+                <span>{msg.player}</span> • {formatTime(msg.timestamp)}
               </div>
               <div>{msg.message}</div>
             </div>
