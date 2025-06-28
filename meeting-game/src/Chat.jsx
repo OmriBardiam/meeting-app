@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
-import { API_BASE } from './config';
+import { WS_BASE } from './config';
 
 // Debug logging
-console.log('WebSocket URL:', API_BASE);
+console.log('WebSocket URL:', WS_BASE);
 console.log('Current hostname:', window.location.hostname);
 
 export default function Chat({ player, teamName, teamColor }) {
@@ -18,10 +18,10 @@ export default function Chat({ player, teamName, teamColor }) {
   };
 
   useEffect(() => {
-    console.log('Attempting WebSocket connection to:', API_BASE);
+    console.log('Attempting WebSocket connection to:', WS_BASE);
     
     // Connect to WebSocket
-    const newSocket = io(API_BASE, {
+    const newSocket = io(WS_BASE, {
       transports: ['websocket', 'polling'],
       timeout: 20000,
     });

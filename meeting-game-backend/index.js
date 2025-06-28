@@ -29,6 +29,26 @@ app.use((req, res, next) => {
   next();
 });
 
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    service: 'drunksters-backend',
+    version: '1.0.0'
+  });
+});
+
+// Root endpoint
+app.get('/', (req, res) => {
+  res.json({ 
+    message: 'Drunksters Backend API',
+    status: 'running',
+    timestamp: new Date().toISOString(),
+    endpoints: ['/state', '/score', '/quest', '/chat/:teamName', '/settings', '/api/health']
+  });
+});
+
 // In-memory storage
 let gameState = {
   teams: {
