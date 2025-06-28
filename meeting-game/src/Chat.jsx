@@ -18,8 +18,6 @@ function Chat({ player, teamName, teamColor }) {
   };
 
   useEffect(() => {
-    console.log('Connecting to WebSocket at:', WS_URL);
-    
     // Connect to WebSocket
     const newSocket = io(WS_URL, {
       transports: ['websocket', 'polling'],
@@ -28,7 +26,6 @@ function Chat({ player, teamName, teamColor }) {
 
     // Connection event handlers
     newSocket.on('connect', () => {
-      console.log('WebSocket connected');
       setConnectionStatus('connected');
       
       // Join team room
@@ -36,30 +33,25 @@ function Chat({ player, teamName, teamColor }) {
     });
 
     newSocket.on('disconnect', () => {
-      console.log('WebSocket disconnected');
       setConnectionStatus('disconnected');
     });
 
-    newSocket.on('connect_error', (error) => {
-      console.error('WebSocket connection error:', error);
+    newSocket.on('connect_error', () => {
       setConnectionStatus('error');
     });
 
     // Chat event handlers
     newSocket.on('chat-history', (history) => {
-      console.log('Received chat history:', history);
       setMessages(history);
     });
 
     newSocket.on('new-message', (message) => {
-      console.log('Received new message:', message);
       setMessages(prev => [...prev, message]);
     });
 
     setSocket(newSocket);
 
     return () => {
-      console.log('Cleaning up WebSocket connection');
       newSocket.close();
     };
   }, [player, teamName]);
@@ -86,6 +78,14 @@ function Chat({ player, teamName, teamColor }) {
       hour: '2-digit', 
       minute: '2-digit' 
     });
+  };
+
+  const getConnectionStatusColor = () => {
+    switch (connectionStatus) {
+      case 'connected': return '#4CAF50';
+      case 'connecting': return '#FFC107';
+      default: return '#F44336';
+    }
   };
 
   return (
@@ -126,8 +126,7 @@ function Chat({ player, teamName, teamColor }) {
             width: '8px',
             height: '8px',
             borderRadius: '50%',
-            background: connectionStatus === 'connected' ? '#4CAF50' : 
-                       connectionStatus === 'connecting' ? '#FFC107' : '#F44336'
+            background: getConnectionStatusColor()
           }}></div>
           {connectionStatus}
         </div>
