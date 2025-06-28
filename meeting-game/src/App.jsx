@@ -82,8 +82,12 @@ function App() {
   }
 
   function handleChangeUser() {
+    console.log('App: handleChangeUser called');
+    console.log('App: Current selectedPlayer:', selectedPlayer);
+    console.log('App: Current selectedTeam:', selectedTeam);
     setSelectedPlayer(null);
     // Keep the team selected so user goes back to user selection screen
+    // The TeamSelection component will automatically detect the saved team and go to user selection
   }
 
   function handleOpenSettings() {
@@ -105,7 +109,10 @@ function App() {
   };
   const teamColor = selectedPlayer && gameState ? getTeamByPlayer(selectedPlayer, gameState.teams) : '#666';
 
+  console.log('App: Render state - selectedPlayer:', selectedPlayer, 'selectedTeam:', selectedTeam, 'loading:', loading, 'gameState:', !!gameState);
+
   if (loading || !gameState) {
+    console.log('App: Showing loading screen');
     return (
       <div style={{ 
         display: 'flex', 
@@ -122,10 +129,12 @@ function App() {
   }
 
   if (!selectedPlayer) {
+    console.log('App: Showing TeamSelection');
     return <TeamSelection onSelectPlayer={handlePlayerSelect} />
   }
 
   if (currentView === 'settings') {
+    console.log('App: Showing Settings');
     return (
       <Settings 
         player={selectedPlayer}
@@ -136,6 +145,7 @@ function App() {
     );
   }
 
+  console.log('App: Showing Dashboard');
   return (
     <div className="App">
       <Dashboard 

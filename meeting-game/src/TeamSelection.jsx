@@ -36,9 +36,12 @@ export default function TeamSelection({ onSelectPlayer }) {
   useEffect(() => {
     async function loadTeams() {
       try {
+        console.log('TeamSelection: Loading teams from backend...');
         const response = await fetch(`${API_BASE}/settings`);
+        console.log('TeamSelection: Response status:', response.status);
         if (response.ok) {
           const data = await response.json();
+          console.log('TeamSelection: Received data:', data);
           const teamsArray = Object.entries(data.teams).map(([name, team]) => ({
             name,
             ...team
@@ -49,9 +52,11 @@ export default function TeamSelection({ onSelectPlayer }) {
           // Check for saved team login
           const savedTeam = localStorage.getItem('selectedTeam');
           const savedPassword = localStorage.getItem('teamPassword');
+          console.log('TeamSelection: Saved team:', savedTeam, 'Saved password:', savedPassword);
           
           if (savedTeam && savedPassword) {
             const team = teamsArray.find(t => t.name === savedTeam);
+            console.log('TeamSelection: Found saved team:', team);
             if (team) {
               // Verify saved password is still valid
               const isValidPassword = 
@@ -59,17 +64,21 @@ export default function TeamSelection({ onSelectPlayer }) {
                 savedPassword === team.adminPassword || 
                 savedPassword === (data.settings?.masterPassword || "admin2024");
               
+              console.log('TeamSelection: Password valid:', isValidPassword);
               if (isValidPassword) {
                 setSelectedTeam(team);
                 setStep('user');
+                console.log('TeamSelection: Going to user selection step');
               } else {
                 // Clear invalid saved login
+                console.log('TeamSelection: Invalid password, clearing saved login');
                 localStorage.removeItem('selectedTeam');
                 localStorage.removeItem('teamPassword');
               }
             }
           }
         } else {
+          console.log('TeamSelection: API failed, using fallback teams');
           // Fallback to default teams if API fails
           setTeams([
             {
@@ -89,7 +98,7 @@ export default function TeamSelection({ onSelectPlayer }) {
           ]);
         }
       } catch (error) {
-        console.error('Error loading teams:', error);
+        console.error('TeamSelection: Error loading teams:', error);
         // Fallback to default teams
         setTeams([
           {
