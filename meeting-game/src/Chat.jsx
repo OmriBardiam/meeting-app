@@ -9,6 +9,10 @@ const WS_URL = import.meta.env.VITE_API_BASE_URL ||
     ? 'https://meeting-app-backend-hh3f.onrender.com'
     : 'https://meeting-app-backend-hh3f.onrender.com');
 
+// Debug logging
+console.log('WebSocket URL:', WS_URL);
+console.log('Current hostname:', window.location.hostname);
+
 function Chat({ player, teamName, teamColor }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
@@ -21,6 +25,8 @@ function Chat({ player, teamName, teamColor }) {
   };
 
   useEffect(() => {
+    console.log('Attempting WebSocket connection to:', WS_URL);
+    
     // Connect to WebSocket
     const newSocket = io(WS_URL, {
       transports: ['websocket', 'polling'],
@@ -29,32 +35,38 @@ function Chat({ player, teamName, teamColor }) {
 
     // Connection event handlers
     newSocket.on('connect', () => {
+      console.log('WebSocket connected successfully');
       setConnectionStatus('connected');
       
       // Join team room
       newSocket.emit('join-team', { player, teamName });
     });
 
-    newSocket.on('disconnect', () => {
+    newSocket.on('disconnect', (reason) => {
+      console.log('WebSocket disconnected:', reason);
       setConnectionStatus('disconnected');
     });
 
-    newSocket.on('connect_error', () => {
+    newSocket.on('connect_error', (error) => {
+      console.error('WebSocket connection error:', error);
       setConnectionStatus('error');
     });
 
     // Chat event handlers
     newSocket.on('chat-history', (history) => {
+      console.log('Received chat history:', history);
       setMessages(history);
     });
 
     newSocket.on('new-message', (message) => {
+      console.log('Received new message:', message);
       setMessages(prev => [...prev, message]);
     });
 
     setSocket(newSocket);
 
     return () => {
+      console.log('Cleaning up WebSocket connection');
       newSocket.close();
     };
   }, [player, teamName]);
