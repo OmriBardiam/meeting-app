@@ -1,6 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { API_BASE, LAYOUT } from './config';
 
+// Responsive utility function
+const getResponsiveStyles = () => {
+  const isMobile = window.innerWidth <= 480;
+  const isTablet = window.innerWidth <= 768;
+  
+  return {
+    containerMaxWidth: isMobile ? LAYOUT.MOBILE_MAX_WIDTH : isTablet ? LAYOUT.TABLET_MAX_WIDTH : LAYOUT.DESKTOP_MAX_WIDTH,
+    padding: isMobile ? LAYOUT.MOBILE_PADDING : isTablet ? LAYOUT.TABLET_PADDING : LAYOUT.DESKTOP_PADDING,
+    isMobile,
+    isTablet
+  };
+};
+
 function Settings({ player, gameState, onBack, onUpdateGameState }) {
   const [settings, setSettings] = useState({
     teams: {
@@ -29,6 +42,14 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(true);
+  const [responsiveStyles, setResponsiveStyles] = useState(getResponsiveStyles());
+
+  // Update responsive styles on window resize
+  useEffect(() => {
+    const handleResize = () => setResponsiveStyles(getResponsiveStyles());
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Get player's team for theming
   const getPlayerTeam = () => {
@@ -67,7 +88,7 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
 
   const isAdmin = player === 'Omri' || player === 'Yoad';
 
-  // Simple container style matching Dashboard
+  // Common styles
   const containerStyle = {
     minHeight: '100vh',
     width: '100vw',
@@ -76,43 +97,49 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    padding: '2vw 1vw 1vw 1vw',
+    padding: responsiveStyles.isMobile ? '1rem' : '2vw 1vw 1vw 1vw',
     fontFamily: 'Inter, system-ui, Avenir, Helvetica, Arial, sans-serif',
     maxWidth: '100vw',
     position: 'relative',
-    background: `linear-gradient(135deg, ${playerTeam?.color || '#667eea'}20 0%, ${playerTeam?.color || '#764ba2'}40 100%)`
+    background: `linear-gradient(135deg, ${playerTeam?.color || '#667eea'}20 0%, ${playerTeam?.color || '#764ba2'}40 100%)`,
+    overflow: 'hidden' // Prevent horizontal scroll
   };
 
   const cardStyle = {
-    background: 'rgba(255,255,255,0.85)',
-    borderRadius: 16,
-    boxShadow: '0 2px 12px #0002',
-    padding: '1.5rem',
+    background: `rgba(255,255,255,${LAYOUT.CARD_BG_OPACITY})`,
+    borderRadius: LAYOUT.BORDER_RADIUS,
+    boxShadow: LAYOUT.CARD_SHADOW,
+    padding: responsiveStyles.isMobile ? '1rem' : responsiveStyles.padding,
     border: '1.5px solid #fff',
     backdropFilter: 'blur(2px)',
     width: '100%',
-    maxWidth: '600px',
-    margin: '0 auto'
+    maxWidth: responsiveStyles.isMobile ? '95vw' : '600px',
+    margin: '0 auto',
+    boxSizing: 'border-box',
+    overflow: 'hidden' // Prevent horizontal scroll
   };
 
   const sectionStyle = {
-    background: 'rgba(255,255,255,0.7)',
-    borderRadius: 8,
-    padding: '1.5rem',
+    background: `rgba(255,255,255,${LAYOUT.SECTION_BG_OPACITY})`,
+    borderRadius: LAYOUT.SMALL_BORDER_RADIUS,
+    padding: responsiveStyles.isMobile ? '1rem' : '1.5rem',
     border: '1px solid rgba(255,255,255,0.3)',
-    marginBottom: '1.5rem'
+    marginBottom: LAYOUT.SECTION_GAP,
+    width: '100%',
+    boxSizing: 'border-box',
+    overflow: 'hidden' // Prevent horizontal scroll
   };
 
   const buttonStyle = (color = playerTeam?.color || '#667eea') => ({
     background: color,
     color: 'white',
     border: 'none',
-    borderRadius: 8,
-    padding: '0.5rem 1rem',
+    borderRadius: LAYOUT.SMALL_BORDER_RADIUS,
+    padding: responsiveStyles.isMobile ? '0.5rem 0.8rem' : '0.5rem 1rem',
     cursor: 'pointer',
     fontWeight: 600,
-    fontSize: '1rem',
-    boxShadow: '0 1px 4px #0002'
+    fontSize: responsiveStyles.isMobile ? '0.9rem' : '1rem',
+    boxShadow: LAYOUT.BUTTON_SHADOW
   });
 
   if (!isAdmin) {
@@ -123,7 +150,7 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
             <h1 style={{ 
               color: playerTeam?.color || '#667eea', 
               fontWeight: 800, 
-              fontSize: '1.8rem', 
+              fontSize: responsiveStyles.isMobile ? '1.5rem' : '1.8rem', 
               margin: 0 
             }}>🏆 Drunksters Settings</h1>
             <button onClick={onBack} style={buttonStyle()}>← Back</button>
@@ -145,7 +172,7 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
             <h1 style={{ 
               color: playerTeam?.color || '#667eea', 
               fontWeight: 800, 
-              fontSize: '1.8rem', 
+              fontSize: responsiveStyles.isMobile ? '1.5rem' : '1.8rem', 
               margin: 0 
             }}>🏆 Drunksters Settings</h1>
             <button onClick={onBack} style={buttonStyle()}>← Back</button>
@@ -266,7 +293,7 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
           <h1 style={{ 
             color: playerTeam?.color || '#667eea', 
             fontWeight: 800, 
-            fontSize: '1.8rem', 
+            fontSize: responsiveStyles.isMobile ? '1.5rem' : '1.8rem', 
             margin: 0 
           }}>🏆 Drunksters Settings</h1>
           <button onClick={onBack} style={buttonStyle()}>← Back</button>
@@ -308,13 +335,13 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
                       display: 'flex', 
                       alignItems: 'center', 
                       gap: LAYOUT.SMALL_GAP,
-                      flexDirection: 'column',
-                      alignItems: 'flex-start'
+                      flexDirection: responsiveStyles.isMobile ? 'column' : 'row',
+                      alignItems: responsiveStyles.isMobile ? 'flex-start' : 'center'
                     }}>
                       <label style={{ 
                         fontWeight: 600, 
-                        minWidth: 'auto',
-                        marginBottom: '0.5rem'
+                        minWidth: responsiveStyles.isMobile ? 'auto' : '120px',
+                        marginBottom: responsiveStyles.isMobile ? '0.5rem' : '0'
                       }}>Team Color:</label>
                       <input
                         type="color"
@@ -331,7 +358,7 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
                           height: '30px', 
                           border: 'none', 
                           borderRadius: 4,
-                          alignSelf: 'flex-start'
+                          alignSelf: responsiveStyles.isMobile ? 'flex-start' : 'center'
                         }}
                       />
                     </div>
@@ -341,15 +368,15 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
                       display: 'flex', 
                       alignItems: 'center', 
                       gap: LAYOUT.SMALL_GAP,
-                      flexDirection: 'column',
-                      alignItems: 'flex-start',
+                      flexDirection: responsiveStyles.isMobile ? 'column' : 'row',
+                      alignItems: responsiveStyles.isMobile ? 'flex-start' : 'center',
                       width: '100%',
                       boxSizing: 'border-box'
                     }}>
                       <label style={{ 
                         fontWeight: 600, 
-                        minWidth: 'auto',
-                        marginBottom: '0.5rem',
+                        minWidth: responsiveStyles.isMobile ? 'auto' : '120px',
+                        marginBottom: responsiveStyles.isMobile ? '0.5rem' : '0',
                         flexShrink: 0
                       }}>Team Password:</label>
                       <input
@@ -362,7 +389,7 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
                           padding: '0.5rem', 
                           borderRadius: 6, 
                           border: '1px solid #ccc',
-                          width: '100%',
+                          width: responsiveStyles.isMobile ? '100%' : 'auto',
                           boxSizing: 'border-box',
                           minWidth: 0 // Allow flex item to shrink
                         }}
@@ -374,15 +401,15 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
                       display: 'flex', 
                       alignItems: 'center', 
                       gap: LAYOUT.SMALL_GAP,
-                      flexDirection: 'column',
-                      alignItems: 'flex-start',
+                      flexDirection: responsiveStyles.isMobile ? 'column' : 'row',
+                      alignItems: responsiveStyles.isMobile ? 'flex-start' : 'center',
                       width: '100%',
                       boxSizing: 'border-box'
                     }}>
                       <label style={{ 
                         fontWeight: 600, 
-                        minWidth: 'auto',
-                        marginBottom: '0.5rem',
+                        minWidth: responsiveStyles.isMobile ? 'auto' : '120px',
+                        marginBottom: responsiveStyles.isMobile ? '0.5rem' : '0',
                         flexShrink: 0
                       }}>Admin Password:</label>
                       <input
@@ -395,7 +422,7 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
                           padding: '0.5rem', 
                           borderRadius: 6, 
                           border: '1px solid #ccc',
-                          width: '100%',
+                          width: responsiveStyles.isMobile ? '100%' : 'auto',
                           boxSizing: 'border-box',
                           minWidth: 0 // Allow flex item to shrink
                         }}
@@ -426,7 +453,7 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
                             alignItems: 'center',
                             gap: '0.5rem',
                             border: '1px solid #eee',
-                            fontSize: '0.8rem',
+                            fontSize: responsiveStyles.isMobile ? '0.8rem' : '1rem',
                             maxWidth: '100%',
                             boxSizing: 'border-box',
                             wordBreak: 'break-word'
@@ -435,7 +462,7 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
                               overflow: 'hidden', 
                               textOverflow: 'ellipsis', 
                               whiteSpace: 'nowrap',
-                              maxWidth: '80px'
+                              maxWidth: responsiveStyles.isMobile ? '80px' : '120px'
                             }}>{member}</span>
                             <button 
                               onClick={() => handleRemoveMember(teamName, member)}
@@ -463,7 +490,7 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
                       <div style={{ 
                         display: 'flex', 
                         gap: LAYOUT.SMALL_GAP,
-                        flexDirection: 'column',
+                        flexDirection: responsiveStyles.isMobile ? 'column' : 'row',
                         width: '100%',
                         boxSizing: 'border-box'
                       }}>
@@ -478,7 +505,7 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
                             padding: '0.5rem', 
                             borderRadius: 6, 
                             border: '1px solid #ccc',
-                            width: '100%',
+                            width: responsiveStyles.isMobile ? '100%' : 'auto',
                             boxSizing: 'border-box',
                             minWidth: 0 // Allow flex item to shrink
                           }}
@@ -488,7 +515,7 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
                           style={{
                             ...buttonStyle(team.color),
                             flexShrink: 0,
-                            minWidth: '60px'
+                            minWidth: responsiveStyles.isMobile ? '60px' : 'auto'
                           }}
                         >
                           Add
@@ -510,15 +537,16 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
               alignItems: 'center', 
               gap: LAYOUT.SMALL_GAP, 
               marginBottom: LAYOUT.ITEM_GAP,
-              flexDirection: 'column',
-              alignItems: 'flex-start',
+              flexDirection: responsiveStyles.isMobile ? 'column' : 'row',
+              alignItems: responsiveStyles.isMobile ? 'flex-start' : 'center',
               width: '100%',
               boxSizing: 'border-box'
             }}>
               <label style={{ 
                 fontWeight: 600, 
-                minWidth: 'auto',
-                marginBottom: '0.5rem'
+                minWidth: responsiveStyles.isMobile ? 'auto' : '120px',
+                marginBottom: responsiveStyles.isMobile ? '0.5rem' : '0',
+                flexShrink: 0
               }}>Quest Points:</label>
               <input
                 type="number"
@@ -530,7 +558,7 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
                   padding: '0.5rem', 
                   borderRadius: 6, 
                   border: '1px solid #ccc', 
-                  width: '100%',
+                  width: responsiveStyles.isMobile ? '100%' : '100px',
                   boxSizing: 'border-box'
                 }}
               />
@@ -541,15 +569,16 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
               alignItems: 'center', 
               gap: LAYOUT.SMALL_GAP, 
               marginBottom: LAYOUT.ITEM_GAP,
-              flexDirection: 'column',
-              alignItems: 'flex-start',
+              flexDirection: responsiveStyles.isMobile ? 'column' : 'row',
+              alignItems: responsiveStyles.isMobile ? 'flex-start' : 'center',
               width: '100%',
               boxSizing: 'border-box'
             }}>
               <label style={{ 
                 fontWeight: 600, 
-                minWidth: 'auto',
-                marginBottom: '0.5rem'
+                minWidth: responsiveStyles.isMobile ? 'auto' : '120px',
+                marginBottom: responsiveStyles.isMobile ? '0.5rem' : '0',
+                flexShrink: 0
               }}>Master Password:</label>
               <input
                 type="text"
@@ -561,7 +590,7 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
                   padding: '0.5rem', 
                   borderRadius: 6, 
                   border: '1px solid #ccc',
-                  width: '100%',
+                  width: responsiveStyles.isMobile ? '100%' : 'auto',
                   boxSizing: 'border-box',
                   minWidth: 0 // Allow flex item to shrink
                 }}
@@ -572,15 +601,15 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
               display: 'flex', 
               alignItems: 'center', 
               gap: LAYOUT.SMALL_GAP,
-              flexDirection: 'column',
-              alignItems: 'flex-start'
+              flexDirection: responsiveStyles.isMobile ? 'column' : 'row',
+              alignItems: responsiveStyles.isMobile ? 'flex-start' : 'center'
             }}>
               <label style={{ 
                 display: 'flex', 
                 alignItems: 'center', 
                 gap: '0.5rem', 
                 fontWeight: 600,
-                marginBottom: '0.5rem'
+                marginBottom: responsiveStyles.isMobile ? '0.5rem' : '0'
               }}>
                 <input
                   type="checkbox"
@@ -598,16 +627,16 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
             display: 'flex', 
             gap: LAYOUT.ITEM_GAP, 
             justifyContent: 'center',
-            flexDirection: 'column'
+            flexDirection: responsiveStyles.isMobile ? 'column' : 'row'
           }}>
             <button 
               onClick={handleSaveSettings} 
               disabled={saving}
               style={{
                 ...buttonStyle(),
-                padding: '0.75rem 1.5rem',
-                fontSize: '1rem',
-                width: '100%'
+                padding: responsiveStyles.isMobile ? '0.75rem 1.5rem' : '0.75rem 2rem',
+                fontSize: responsiveStyles.isMobile ? '0.9rem' : '1rem',
+                width: responsiveStyles.isMobile ? '100%' : 'auto'
               }}
             >
               {saving ? 'Saving...' : 'Save Settings'}
@@ -616,9 +645,9 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
               onClick={handleResetToDefault}
               style={{
                 ...buttonStyle('#ff9800'),
-                padding: '0.75rem 1.5rem',
-                fontSize: '1rem',
-                width: '100%'
+                padding: responsiveStyles.isMobile ? '0.75rem 1.5rem' : '0.75rem 2rem',
+                fontSize: responsiveStyles.isMobile ? '0.9rem' : '1rem',
+                width: responsiveStyles.isMobile ? '100%' : 'auto'
               }}
             >
               Reset to Default
