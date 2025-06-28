@@ -109,7 +109,7 @@ function App() {
   };
   const teamColor = selectedPlayer && gameState ? getTeamByPlayer(selectedPlayer, gameState.teams) : '#666';
 
-  console.log('App: Render state - selectedPlayer:', selectedPlayer, 'selectedTeam:', selectedTeam, 'loading:', loading, 'gameState:', !!gameState);
+  console.log('App: Current state - selectedPlayer:', selectedPlayer, 'selectedTeam:', selectedTeam, 'loading:', loading, 'gameState:', !!gameState);
 
   if (loading || !gameState) {
     console.log('App: Showing loading screen');

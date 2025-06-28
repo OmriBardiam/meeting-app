@@ -1,16 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
 
-// WebSocket URL configuration
-const WS_URL = import.meta.env.VITE_API_BASE_URL || 
+// Use the same API base URL logic as App.jsx
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 
   (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
     ? 'http://localhost:3001' 
     : window.location.hostname.includes('github.io')
-    ? 'https://meeting-app-backend-hh3f.onrender.com'
-    : 'https://meeting-app-backend-hh3f.onrender.com');
+    ? 'https://drunksters-backend-production.up.railway.app'
+    : 'https://drunksters-backend-production.up.railway.app');
 
 // Debug logging
-console.log('WebSocket URL:', WS_URL);
+console.log('WebSocket URL:', API_BASE);
 console.log('Current hostname:', window.location.hostname);
 
 function Chat({ player, teamName, teamColor }) {
@@ -25,10 +25,10 @@ function Chat({ player, teamName, teamColor }) {
   };
 
   useEffect(() => {
-    console.log('Attempting WebSocket connection to:', WS_URL);
+    console.log('Attempting WebSocket connection to:', API_BASE);
     
     // Connect to WebSocket
-    const newSocket = io(WS_URL, {
+    const newSocket = io(API_BASE, {
       transports: ['websocket', 'polling'],
       timeout: 20000,
     });
