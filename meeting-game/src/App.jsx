@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import PlayerSelection from './PlayerSelection'
 import Dashboard from './Dashboard'
+import Settings from './Settings'
 import './App.css'
 
 // Better API base URL handling
@@ -9,7 +10,7 @@ const API_BASE = import.meta.env.VITE_API_BASE_URL ||
     ? 'http://localhost:3001' 
     : window.location.hostname.includes('github.io')
     ? 'https://meeting-app-backend-hh3f.onrender.com'
-    : 'https://meeting-app-backend-hh3f.onrender.com');
+    : 'http://192.168.1.243:3001');
 
 // Debug logging
 console.log('Current hostname:', window.location.hostname);
@@ -19,6 +20,7 @@ function App() {
   const [selectedPlayer, setSelectedPlayer] = useState(() => localStorage.getItem('selectedPlayer') || null);
   const [gameState, setGameState] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [currentView, setCurrentView] = useState('dashboard'); // 'dashboard' or 'settings'
 
   async function fetchGameState() {
     try {
@@ -60,13 +62,23 @@ function App() {
 
   function handlePlayerSelect(name) {
     setSelectedPlayer(name);
+    setCurrentView('dashboard');
     setLoading(true);
     fetchGameState();
   }
 
   function handleLogout() {
     setSelectedPlayer(null);
+    setCurrentView('dashboard');
     localStorage.removeItem('selectedPlayer');
+  }
+
+  function handleOpenSettings() {
+    setCurrentView('settings');
+  }
+
+  function handleBackToDashboard() {
+    setCurrentView('dashboard');
   }
 
   // Get team color for navigation
@@ -99,13 +111,25 @@ function App() {
     return <PlayerSelection onSelectPlayer={handlePlayerSelect} />
   }
 
+  if (currentView === 'settings') {
+    return (
+      <Settings 
+        player={selectedPlayer}
+        gameState={gameState}
+        onBack={handleBackToDashboard}
+        onUpdateGameState={fetchGameState}
+      />
+    );
+  }
+
   return (
     <div className="App">
       <Dashboard 
         player={selectedPlayer} 
         gameState={gameState} 
         onLogout={handleLogout} 
-        onScoreUpdate={fetchGameState} 
+        onScoreUpdate={fetchGameState}
+        onOpenSettings={handleOpenSettings}
       />
     </div>
   );

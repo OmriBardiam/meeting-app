@@ -18,7 +18,7 @@ const PORT = process.env.PORT || 3001;
 
 // Middleware
 app.use(cors({
-  origin: ["https://omribardiam.github.io", "http://localhost:5173", "http://localhost:3000"],
+  origin: ["https://omribardiam.github.io", "http://localhost:5173", "http://localhost:3000", "http://192.168.1.243:5173"],
   credentials: true
 }));
 app.use(express.json());
@@ -37,12 +37,16 @@ let gameState = {
       members: ["Keniya", "Pita", "Misha", "Roni", "Omri", "Segev"],
       score: 0,
       admin: "Omri",
+      password: "teamomri2024",
+      adminPassword: "omriadmin2024"
     },
     "Team Yoad": {
       color: '#d32f2f',
       members: ["Meitav", "Jules", "Tetro", "Idan", "Yoad"],
       score: 0,
       admin: "Yoad",
+      password: "teamyoad2024",
+      adminPassword: "yoadadmin2024"
     },
   },
   quests: {
@@ -54,6 +58,13 @@ let gameState = {
       { id: 1, text: "Secret Quest 1", completed: false },
       { id: 2, text: "Secret Quest 2", completed: false },
     ],
+  },
+  settings: {
+    questPoints: 10,
+    masterPassword: "admin2024",
+    autoSave: true,
+    chatEnabled: true,
+    realTimeUpdates: true
   }
 };
 
@@ -173,11 +184,12 @@ app.post('/quest', (req, res) => {
   const quest = gameState.quests[teamName].find(q => q.id === questId);
   if (quest) {
     quest.completed = !quest.completed;
-    // Add or remove 10 points
+    // Add or remove quest points from settings
+    const questPoints = gameState.settings.questPoints || 10;
     if (quest.completed) {
-      gameState.teams[teamName].score += 10;
+      gameState.teams[teamName].score += questPoints;
     } else {
-      gameState.teams[teamName].score -= 10;
+      gameState.teams[teamName].score -= questPoints;
     }
     res.json({ success: true, quest, newScore: gameState.teams[teamName].score });
   } else {
@@ -194,9 +206,10 @@ app.delete('/quest', (req, res) => {
   const idx = quests.findIndex(q => q.id === questId);
   if (idx !== -1) {
     const [removed] = quests.splice(idx, 1);
-    // If quest was completed, remove the points
+    // If quest was completed, remove the points using settings
     if (removed.completed) {
-      gameState.teams[teamName].score -= 10;
+      const questPoints = gameState.settings.questPoints || 10;
+      gameState.teams[teamName].score -= questPoints;
     }
     res.json({ success: true });
   } else {
@@ -249,6 +262,77 @@ app.put('/quest', (req, res) => {
   const newQuest = { id: newId, text: text.trim(), completed: false };
   quests.push(newQuest);
   res.json({ success: true, quest: newQuest });
+});
+
+// Settings endpoint
+app.post('/settings', (req, res) => {
+  const { settings, admin } = req.body;
+  
+  // Validate admin (only Omri or Yoad can update settings)
+  if (admin !== 'Omri' && admin !== 'Yoad') {
+    return res.status(403).json({ error: 'Unauthorized - Only admins can update settings' });
+  }
+  
+  try {
+    // Update teams configuration
+    if (settings.teams) {
+      Object.keys(settings.teams).forEach(teamName => {
+        if (gameState.teams[teamName]) {
+          // Update team properties but preserve score
+          const currentScore = gameState.teams[teamName].score;
+          gameState.teams[teamName] = {
+            ...settings.teams[teamName],
+            score: currentScore
+          };
+          
+          // Initialize quests for new teams if they don't exist
+          if (!gameState.quests[teamName]) {
+            gameState.quests[teamName] = [
+              { id: 1, text: "Secret Quest 1", completed: false },
+              { id: 2, text: "Secret Quest 2", completed: false },
+            ];
+          }
+          
+          // Initialize chat for new teams if they don't exist
+          if (!teamChats[teamName]) {
+            teamChats[teamName] = [];
+          }
+        }
+      });
+    }
+    
+    // Update global settings
+    if (settings.questPoints !== undefined) {
+      gameState.settings.questPoints = settings.questPoints;
+    }
+    if (settings.masterPassword !== undefined) {
+      gameState.settings.masterPassword = settings.masterPassword;
+    }
+    if (settings.autoSave !== undefined) {
+      gameState.settings.autoSave = settings.autoSave;
+    }
+    if (settings.chatEnabled !== undefined) {
+      gameState.settings.chatEnabled = settings.chatEnabled;
+    }
+    if (settings.realTimeUpdates !== undefined) {
+      gameState.settings.realTimeUpdates = settings.realTimeUpdates;
+    }
+    
+    console.log(`Settings updated by ${admin}:`, settings);
+    res.json({ success: true, message: 'Settings updated successfully' });
+    
+  } catch (error) {
+    console.error('Error updating settings:', error);
+    res.status(500).json({ error: 'Failed to update settings' });
+  }
+});
+
+// Get settings endpoint
+app.get('/settings', (req, res) => {
+  res.json({
+    teams: gameState.teams,
+    settings: gameState.settings
+  });
 });
 
 server.listen(PORT, '0.0.0.0', () => {

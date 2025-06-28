@@ -20,69 +20,104 @@ const teams = [
     name: "Team Omri",
     color: "#1976d2",
     members: ["Keniya", "Pita", "Misha", "Roni", "Omri", "Segev"],
+    password: "teamomri2024",
+    adminPassword: "omriadmin2024"
   },
   {
     name: "Team Yoad",
     color: "#d32f2f",
     members: ["Meitav", "Jules", "Tetro", "Idan", "Yoad"],
+    password: "teamyoad2024",
+    adminPassword: "yoadadmin2024"
   },
 ];
-
-const playerPasswords = {
-  // Team Omri
-  Keniya: "dolphin17",
-  Pita: "sunset34",
-  Misha: "forest56",
-  Roni: "ocean78",
-  Omri: "jellyfish42",
-  
-  // Team Yoad
-  Meitav: "river91",
-  Jules: "cloud23",
-  Tetro: "star45",
-  Idan: "moon67",
-  Yoad: "mountain89",
-  Segev: "eagle12",
-};
 
 // Master password for admin access to any user
 const MASTER_PASSWORD = "admin2024";
 
-export default function PlayerSelection({ gameState, onPlayerSelect }) {
-  if (!gameState) {
-    return <div>Loading...</div>;
+export default function PlayerSelection({ onSelectPlayer }) {
+  const [pendingPlayer, setPendingPlayer] = useState(null);
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  function handlePlayerClick(name) {
+    setPendingPlayer(name);
+    setPassword("");
+    setError("");
   }
 
-  const allPlayers = [];
-  Object.entries(gameState.teams).forEach(([teamName, team]) => {
-    team.members.forEach(player => {
-      allPlayers.push({ name: player, team: teamName, color: team.color });
-    });
-  });
+  function handlePasswordSubmit(e) {
+    e.preventDefault();
+    
+    // Find the team this player belongs to
+    const playerTeam = teams.find(team => team.members.includes(pendingPlayer));
+    
+    if (!playerTeam) {
+      setError("Player not found in any team");
+      return;
+    }
+
+    // Check if password matches team password, admin password, or master password
+    const isValidPassword = 
+      password === playerTeam.password || 
+      password === playerTeam.adminPassword || 
+      password === MASTER_PASSWORD;
+
+    if (isValidPassword) {
+      onSelectPlayer(pendingPlayer);
+    } else {
+      setError("Incorrect password");
+    }
+  }
+
+  if (pendingPlayer) {
+    const playerTeam = teams.find(team => team.members.includes(pendingPlayer));
+    return (
+      <div className="player-selection-container fancy-bg">
+        <h1 className="player-title">🏆 Drunksters</h1>
+        <h2>Enter password for {pendingPlayer}</h2>
+        <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem' }}>
+          Team: {playerTeam?.name}
+        </p>
+        <form onSubmit={handlePasswordSubmit} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+          <input
+            type="password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            placeholder="Team Password"
+            style={{ fontSize: '1.2rem', padding: '0.5rem', borderRadius: 8, border: '1px solid #ccc' }}
+            autoFocus
+          />
+          <button type="submit" className="player-button card-style" style={{ background: playerTeam?.color }}>
+            Join Quest
+          </button>
+          {error && <div style={{ color: 'red' }}>{error}</div>}
+        </form>
+        <button style={{ marginTop: '1rem', background: '#888', color: 'white', border: 'none', borderRadius: 8, padding: '0.5rem 1rem' }} onClick={() => setPendingPlayer(null)}>
+          Back
+        </button>
+      </div>
+    );
+  }
 
   return (
-    <div className="player-selection">
-      <div className="header">
-        <h1>🏆 Drunksters</h1>
-        <p>Choose your player to start the quest!</p>
-      </div>
-      
-      <div className="teams-container">
-        {Object.entries(gameState.teams).map(([teamName, team]) => (
-          <div key={teamName} className="team-section">
-            <h2 style={{ color: team.color }}>{teamName}</h2>
-            <div className="players-grid">
-              {team.members.map(player => (
+    <div className="player-selection-container fancy-bg">
+      <h1 className="player-title">🏆 Drunksters</h1>
+      <div className="player-subtitle">Pick your player to start the quest! 🎉</div>
+      <div className="team-groups">
+        {teams.map((team) => (
+          <div key={team.name} className="team-group">
+            <div className="team-label" style={{ color: team.color }}>{team.name}</div>
+            <div className="player-list">
+              {team.members.map((name) => (
                 <button
-                  key={player}
-                  className="player-button"
-                  style={{ 
-                    borderColor: team.color,
-                    backgroundColor: team.color + '20'
-                  }}
-                  onClick={() => onPlayerSelect(player)}
+                  key={name}
+                  className="player-button card-style"
+                  style={{ background: team.color, animationDelay: `${Math.random() * 0.2}s` }}
+                  onClick={() => handlePlayerClick(name)}
                 >
-                  {player}
+                  <span className="player-avatar" aria-label={name}>{playerAvatars[name] || name[0]}</span>
+                  <span className="player-name">{name}</span>
                 </button>
               ))}
             </div>
