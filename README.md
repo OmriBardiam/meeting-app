@@ -15,7 +15,7 @@ A full-stack web application for team-based meeting games with real-time scoring
 - **Frontend**: React + Vite
 - **Backend**: Node.js + Express
 - **Styling**: CSS-in-JS with modern design
-- **Deployment**: GitHub Actions + Vercel + Render
+- **Deployment**: GitHub Actions + Render
 
 ## 🚀 Quick Start
 
@@ -49,9 +49,8 @@ A full-stack web application for team-based meeting games with real-time scoring
 
 ### Prerequisites
 
-1. **Vercel Account** (for frontend)
-2. **Render Account** (for backend)
-3. **GitHub Repository** (already set up)
+1. **Render Account** (for backend)
+2. **GitHub Repository** (already set up)
 
 ### Setup Steps
 
@@ -67,41 +66,11 @@ A full-stack web application for team-based meeting games with real-time scoring
    - **Environment**: Node
 4. Deploy and note the service URL (e.g., `https://meeting-app-backend.onrender.com`)
 
-#### 2. Deploy Frontend to Vercel
-
-1. Go to [Vercel.com](https://vercel.com) and sign up
-2. Import your GitHub repository
-3. Configure the project:
-   - **Framework Preset**: Vite
-   - **Root Directory**: `meeting-game`
-   - **Build Command**: `npm run build`
-   - **Output Directory**: `dist`
-4. Add environment variable:
-   - **Name**: `VITE_API_BASE_URL`
-   - **Value**: Your Render backend URL (e.g., `https://meeting-app-backend.onrender.com`)
-5. Deploy
-
-#### 3. Configure GitHub Secrets (Optional)
-
-Go to your GitHub repository → Settings → Secrets and variables → Actions, and add:
-
-**For Backend (Render):**
-- `RENDER_TOKEN`: Your Render API token
-- `RENDER_SERVICE_ID`: Your Render service ID
-
-**For Frontend (Vercel):**
-- `VERCEL_TOKEN`: Your Vercel API token
-- `VERCEL_ORG_ID`: Your Vercel organization ID
-- `VERCEL_PROJECT_ID`: Your Vercel project ID
-- `VITE_API_BASE_URL`: Your backend URL
-
 ### Automatic Deployment
 
 The GitHub Actions workflows will automatically deploy your app when you push to the `main` branch:
 
 - `deploy-backend.yml`: Deploys backend changes to Render
-- `deploy-frontend.yml`: Deploys frontend changes to Vercel
-- `deploy-all.yml`: Deploys both frontend and backend together
 
 ## 📁 Project Structure
 
