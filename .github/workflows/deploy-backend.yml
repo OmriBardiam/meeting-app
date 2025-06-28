@@ -1,4 +1,4 @@
-name: Deploy Backend to Render
+name: Deploy Backend to Railway
 
 on:
   push:
@@ -30,12 +30,15 @@ jobs:
       working-directory: ./meeting-game-backend
       run: npm test --if-present
       
-    - name: Deploy to Render
+    - name: Deploy to Railway
       env:
-        RENDER_TOKEN: ${{ secrets.RENDER_TOKEN }}
-        RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
+        RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        RAILWAY_SERVICE: ${{ secrets.RAILWAY_SERVICE }}
       run: |
-        # This step will trigger a deployment on Render
-        # You'll need to set up the RENDER_TOKEN and RENDER_SERVICE_ID secrets
-        echo "Backend deployment triggered"
-        echo "Please ensure you have set up the Render service and added the required secrets" 
+        # Install Railway CLI
+        npm install -g @railway/cli
+        
+        # Deploy to Railway
+        railway login --token $RAILWAY_TOKEN
+        railway service $RAILWAY_SERVICE
+        railway up --service $RAILWAY_SERVICE 
