@@ -123,7 +123,7 @@ function App() {
     );
   }
 
-  if (!selectedPlayer || !selectedTeam) {
+  if (!selectedPlayer) {
     return <TeamSelection onSelectPlayer={handlePlayerSelect} />
   }
 

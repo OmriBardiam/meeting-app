@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./PlayerSelection.css";
+import "./TeamSelection.css";
 
 // Use the same API base URL logic as App.jsx
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 
@@ -122,8 +122,8 @@ export default function PlayerSelection({ onSelectPlayer }) {
 
   if (loading) {
     return (
-      <div className="player-selection-container fancy-bg">
-        <h1 className="player-title">🏆 Drunksters</h1>
+      <div className="team-selection-container fancy-bg">
+        <h1 className="team-title">🏆 Drunksters</h1>
         <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
           Loading teams...
         </div>
@@ -134,8 +134,8 @@ export default function PlayerSelection({ onSelectPlayer }) {
   if (pendingPlayer) {
     const playerTeam = teams.find(team => team.members.includes(pendingPlayer));
     return (
-      <div className="player-selection-container fancy-bg">
-        <h1 className="player-title">🏆 Drunksters</h1>
+      <div className="team-selection-container fancy-bg">
+        <h1 className="team-title">🏆 Drunksters</h1>
         <h2>Enter password for {pendingPlayer}</h2>
         <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem' }}>
           Team: {playerTeam?.name}
@@ -149,7 +149,7 @@ export default function PlayerSelection({ onSelectPlayer }) {
             style={{ fontSize: '1.2rem', padding: '0.5rem', borderRadius: 8, border: '1px solid #ccc' }}
             autoFocus
           />
-          <button type="submit" className="player-button card-style" style={{ background: playerTeam?.color }}>
+          <button type="submit" className="team-button card-style" style={{ background: playerTeam?.color }}>
             Join Quest
           </button>
           {error && <div style={{ color: 'red' }}>{error}</div>}
@@ -162,9 +162,9 @@ export default function PlayerSelection({ onSelectPlayer }) {
   }
 
   return (
-    <div className="player-selection-container fancy-bg">
-      <h1 className="player-title">🏆 Drunksters</h1>
-      <div className="player-subtitle">Pick your player to start the quest! 🎉</div>
+    <div className="team-selection-container fancy-bg">
+      <h1 className="team-title">🏆 Drunksters</h1>
+      <div className="team-subtitle">Pick your player to start the quest! 🎉</div>
       <div className="team-groups">
         {teams.map((team) => (
           <div key={team.name} className="team-group">
