@@ -7,7 +7,13 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: ["https://omribardiam.github.io", "http://localhost:5173", "http://localhost:3000", "http://192.168.1.243:5173", "*"],
+    origin: [
+      "https://omribardiam.github.io", 
+      "http://localhost:5173", 
+      "http://localhost:3000", 
+      "http://localhost:5174",
+      "*"
+    ],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"]
@@ -18,7 +24,12 @@ const PORT = process.env.PORT || 3001;
 
 // Middleware
 app.use(cors({
-  origin: ["https://omribardiam.github.io", "http://localhost:5173", "http://localhost:3000", "http://192.168.1.243:5173"],
+  origin: [
+    "https://omribardiam.github.io", 
+    "http://localhost:5173", 
+    "http://localhost:3000", 
+    "http://localhost:5174"
+  ],
   credentials: true
 }));
 app.use(express.json());

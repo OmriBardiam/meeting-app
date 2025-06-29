@@ -1,17 +1,15 @@
 // Centralized configuration for the Drunksters app
 
-// API Base URL configuration
+// API Base URL configuration - simple localhost or production
 export const API_BASE = import.meta.env.VITE_API_BASE_URL || 
-  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.includes('192.168')
+  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? 'http://localhost:3001' 
     : 'https://meeting-app-production-3afd.up.railway.app');
 
-// WebSocket URL configuration
+// WebSocket URL configuration - simple localhost or production
 export const WS_BASE = import.meta.env.VITE_WS_BASE_URL || 
   (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? 'ws://localhost:3001'
-    : window.location.hostname.includes('192.168')
-    ? 'ws://192.168.1.243:3001'
     : 'wss://meeting-app-production-3afd.up.railway.app');
 
 // Debug logging
@@ -63,7 +61,9 @@ export const BREAKPOINTS = {
 
 // Emoji set for avatars
 const EMOJI_SET = [
-  "🦄", "🐼", "🦁", "🐰", "🦊", "🐸", "🐵", "🐻", "🐨", "🐯", "🦒", "🦓", "🦔", "🦦", "🦥", "🦜", "🦩", "🦚", "🦢", "🦤", "🦭", "🦈", "🦑", "🦞", "🦀", "🦋", "🐙", "🐬", "🐳", "🐋", "🦕", "🦖"
+  "🦄", "🐼", "🦁", "🐰", "🦊", "🐸", "🐵", "🐻", "🐨", "🐯", "🦒", "🦓", "🦔", "🦦", "🦥", "🦜", "🦩", "🦚", "🦢", "🦤", "🦭", "🦈", "🦑", "🦞", "🦀", "🦋", "🐙", "🐬", "🐳", "🐋", "🦕", "🦖",
+  "🐶", "🐱", "🐭", "🐹", "🐮", "🐷", "🐽", "🐔", "🐧", "🐦", "🐤", "🐣", "🦆", "🦅", "🦉", "🦇", "🐺", "🐗", "🐴", "🦄",
+  "🦘", "🦡", "🦃", "🦚", "🦜", "🦢", "🦩", "🦨", "🦝", "🦙", "🦒", "🦘", "🦡", "🦃", "🦚", "🦜", "🦢", "🦩", "🦨", "🦝"
 ];
 
 // Get consistent avatar for a player based on their name

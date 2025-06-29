@@ -140,8 +140,13 @@ export default function TeamSelection({ onSelectPlayer }) {
       setTeamPassword("");
       setError("");
     } else if (step === 'user') {
-      setStep('password');
+      setStep('team');
+      setSelectedTeam(null);
+      setTeamPassword("");
       setError("");
+      // Clear saved login when going back to team selection
+      localStorage.removeItem('selectedTeam');
+      localStorage.removeItem('teamPassword');
     }
   }
 
