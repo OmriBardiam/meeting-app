@@ -81,14 +81,8 @@ let gameState = {
     },
   },
   quests: {
-    "Team Omri": [
-      { id: 1, text: "Secret Quest 1", completed: false },
-      { id: 2, text: "Secret Quest 2", completed: false },
-    ],
-    "Team Yoad": [
-      { id: 1, text: "Secret Quest 1", completed: false },
-      { id: 2, text: "Secret Quest 2", completed: false },
-    ],
+    "Team Omri": [],
+    "Team Yoad": [],
   },
   settings: {
     questPoints: 10,
@@ -316,10 +310,7 @@ app.post('/settings', (req, res) => {
           
           // Initialize quests for new teams if they don't exist
           if (!gameState.quests[teamName]) {
-            gameState.quests[teamName] = [
-              { id: 1, text: "Secret Quest 1", completed: false },
-              { id: 2, text: "Secret Quest 2", completed: false },
-            ];
+            gameState.quests[teamName] = [];
           }
           
           // Initialize chat for new teams if they don't exist

@@ -12,6 +12,8 @@ console.log('API Base URL:', API_BASE);
 function App() {
   const [selectedPlayer, setSelectedPlayer] = useState(() => localStorage.getItem('selectedPlayer') || null);
   const [selectedTeam, setSelectedTeam] = useState(() => localStorage.getItem('selectedTeam') || null);
+  const [adminPassword, setAdminPassword] = useState(() => localStorage.getItem('adminPassword') || '');
+  const [isAdmin, setIsAdmin] = useState(() => localStorage.getItem('isAdmin') === '1');
   const [gameState, setGameState] = useState(null);
   const [loading, setLoading] = useState(true);
   const [currentView, setCurrentView] = useState('dashboard'); // 'dashboard' or 'settings'
@@ -58,8 +60,17 @@ function App() {
     localStorage.setItem('selectedTeam', selectedTeam || '');
   }, [selectedTeam]);
 
-  function handlePlayerSelect(name) {
+  useEffect(() => {
+    localStorage.setItem('adminPassword', adminPassword || '');
+  }, [adminPassword]);
+
+  useEffect(() => {
+    localStorage.setItem('isAdmin', isAdmin ? '1' : '0');
+  }, [isAdmin]);
+
+  function handlePlayerSelect(name, isAdminFlag) {
     setSelectedPlayer(name);
+    setIsAdmin(isAdminFlag);
     setCurrentView('dashboard');
     setLoading(true);
     fetchGameState();
@@ -68,10 +79,14 @@ function App() {
   function handleLogout() {
     setSelectedPlayer(null);
     setSelectedTeam(null);
+    setAdminPassword('');
+    setIsAdmin(false);
     setCurrentView('dashboard');
     localStorage.removeItem('selectedPlayer');
     localStorage.removeItem('selectedTeam');
     localStorage.removeItem('teamPassword');
+    localStorage.removeItem('adminPassword');
+    localStorage.removeItem('isAdmin');
   }
 
   function handleChangeUser() {
@@ -79,6 +94,7 @@ function App() {
     console.log('App: Current selectedPlayer:', selectedPlayer);
     console.log('App: Current selectedTeam:', selectedTeam);
     setSelectedPlayer(null);
+    setAdminPassword('');
     // Keep the team selected so user goes back to user selection screen
     // The TeamSelection component will automatically detect the saved team and go to user selection
   }
@@ -134,6 +150,9 @@ function App() {
         gameState={gameState}
         onBack={handleBackToDashboard}
         onUpdateGameState={fetchGameState}
+        adminPassword={adminPassword}
+        setAdminPassword={setAdminPassword}
+        isAdmin={isAdmin}
       />
     );
   }
@@ -148,6 +167,9 @@ function App() {
         onScoreUpdate={fetchGameState}
         onOpenSettings={handleOpenSettings}
         onChangeUser={handleChangeUser}
+        adminPassword={adminPassword}
+        setAdminPassword={setAdminPassword}
+        isAdmin={isAdmin}
       />
     </div>
   );

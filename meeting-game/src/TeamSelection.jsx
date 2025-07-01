@@ -10,6 +10,7 @@ export default function TeamSelection({ onSelectPlayer }) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [step, setStep] = useState('team'); // 'team', 'password', 'user'
+  const [isAdmin, setIsAdmin] = useState(false);
 
   // Load teams and master password from backend
   useEffect(() => {
@@ -37,22 +38,21 @@ export default function TeamSelection({ onSelectPlayer }) {
             const team = teamsArray.find(t => t.name === savedTeam);
             console.log('TeamSelection: Found saved team:', team);
             if (team) {
-              // Verify saved password is still valid
-              const isValidPassword = 
-                savedPassword === team.password || 
-                savedPassword === team.adminPassword || 
+              // Determine role
+              const isAdminLogin =
+                savedPassword === team.adminPassword ||
                 savedPassword === (data.settings?.masterPassword || "admin2024");
-              
-              console.log('TeamSelection: Password valid:', isValidPassword);
+              const isValidPassword =
+                savedPassword === team.password ||
+                isAdminLogin;
               if (isValidPassword) {
                 setSelectedTeam(team);
+                setIsAdmin(isAdminLogin);
                 setStep('user');
-                console.log('TeamSelection: Going to user selection step');
               } else {
-                // Clear invalid saved login
-                console.log('TeamSelection: Invalid password, clearing saved login');
                 localStorage.removeItem('selectedTeam');
                 localStorage.removeItem('teamPassword');
+                localStorage.removeItem('isAdmin');
               }
             }
           }
@@ -63,16 +63,12 @@ export default function TeamSelection({ onSelectPlayer }) {
             {
               name: "Team Omri",
               color: "#1976d2",
-              members: ["Keniya", "Pita", "Misha", "Roni", "Omri", "Segev"],
-              password: "teamomri2024",
-              adminPassword: "omriadmin2024"
+              members: ["Keniya", "Pita", "Misha", "Roni", "Omri", "Segev"]
             },
             {
               name: "Team Yoad",
               color: "#d32f2f",
-              members: ["Meitav", "Jules", "Tetro", "Idan", "Yoad"],
-              password: "teamyoad2024",
-              adminPassword: "yoadadmin2024"
+              members: ["Meitav", "Jules", "Tetro", "Idan", "Yoad"]
             },
           ]);
         }
@@ -83,16 +79,12 @@ export default function TeamSelection({ onSelectPlayer }) {
           {
             name: "Team Omri",
             color: "#1976d2",
-            members: ["Keniya", "Pita", "Misha", "Roni", "Omri", "Segev"],
-            password: "teamomri2024",
-            adminPassword: "omriadmin2024"
+            members: ["Keniya", "Pita", "Misha", "Roni", "Omri", "Segev"]
           },
           {
             name: "Team Yoad",
             color: "#d32f2f",
-            members: ["Meitav", "Jules", "Tetro", "Idan", "Yoad"],
-            password: "teamyoad2024",
-            adminPassword: "yoadadmin2024"
+            members: ["Meitav", "Jules", "Tetro", "Idan", "Yoad"]
           },
         ]);
       } finally {
@@ -112,17 +104,17 @@ export default function TeamSelection({ onSelectPlayer }) {
 
   function handlePasswordSubmit(e) {
     e.preventDefault();
-    
-    // Check if password matches team password, admin password, or master password
-    const isValidPassword = 
-      teamPassword === selectedTeam.password || 
-      teamPassword === selectedTeam.adminPassword || 
+    const isAdminLogin =
+      teamPassword === selectedTeam.adminPassword ||
       teamPassword === masterPassword;
-
+    const isValidPassword =
+      teamPassword === selectedTeam.password ||
+      isAdminLogin;
     if (isValidPassword) {
-      // Save team login to localStorage
       localStorage.setItem('selectedTeam', selectedTeam.name);
       localStorage.setItem('teamPassword', teamPassword);
+      localStorage.setItem('isAdmin', isAdminLogin ? '1' : '0');
+      setIsAdmin(isAdminLogin);
       setStep('user');
     } else {
       setError("Incorrect password");
@@ -130,7 +122,7 @@ export default function TeamSelection({ onSelectPlayer }) {
   }
 
   function handleUserSelect(playerName) {
-    onSelectPlayer(playerName);
+    onSelectPlayer(playerName, isAdmin);
   }
 
   function handleBack() {
@@ -147,6 +139,7 @@ export default function TeamSelection({ onSelectPlayer }) {
       // Clear saved login when going back to team selection
       localStorage.removeItem('selectedTeam');
       localStorage.removeItem('teamPassword');
+      localStorage.removeItem('isAdmin');
     }
   }
 

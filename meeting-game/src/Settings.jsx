@@ -14,26 +14,22 @@ const getResponsiveStyles = () => {
   };
 };
 
-function Settings({ player, gameState, onBack, onUpdateGameState }) {
+function Settings({ player, gameState, onBack, onUpdateGameState, adminPassword, setAdminPassword, isAdmin }) {
   const [settings, setSettings] = useState({
     teams: {
       "Team Omri": {
         color: '#1976d2',
         members: ["Keniya", "Pita", "Misha", "Roni", "Omri", "Segev"],
-        password: "teamomri2024",
-        adminPassword: "omriadmin2024",
         admin: "Omri"
       },
       "Team Yoad": {
         color: '#d32f2f',
         members: ["Meitav", "Jules", "Tetro", "Idan", "Yoad"],
-        password: "teamyoad2024",
-        adminPassword: "yoadadmin2024",
         admin: "Yoad"
       }
     },
     questPoints: 10,
-    masterPassword: "admin2024",
+    masterPassword: '',
     chatEnabled: true
   });
 
@@ -61,6 +57,8 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
     return null;
   };
   const playerTeam = getPlayerTeam();
+  // Only show admin UI if player is the admin for their team AND used the admin password
+  const isTeamAdmin = isAdmin && playerTeam && player === playerTeam.admin;
 
   // Load current settings from backend
   useEffect(() => {
@@ -72,7 +70,7 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
           setSettings({
             teams: data.teams,
             questPoints: data.settings?.questPoints || 10,
-            masterPassword: data.settings?.masterPassword || "admin2024",
+            masterPassword: data.settings?.masterPassword || "",
             chatEnabled: data.settings?.chatEnabled !== false
           });
         }
@@ -86,119 +84,20 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
     loadSettings();
   }, []);
 
-  const isAdmin = player === 'Omri' || player === 'Yoad';
-
-  // Common styles
-  const containerStyle = {
-    minHeight: '100vh',
-    width: '100vw',
-    margin: 0,
-    boxSizing: 'border-box',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: responsiveStyles.isMobile ? '1rem' : '2vw 1vw 1vw 1vw',
-    fontFamily: 'Inter, system-ui, Avenir, Helvetica, Arial, sans-serif',
-    maxWidth: '100vw',
-    position: 'relative',
-    background: `linear-gradient(135deg, ${playerTeam?.color || '#667eea'}20 0%, ${playerTeam?.color || '#764ba2'}40 100%)`,
-    overflow: 'hidden' // Prevent horizontal scroll
-  };
-
-  const cardStyle = {
-    background: `rgba(255,255,255,${LAYOUT.CARD_BG_OPACITY})`,
-    borderRadius: LAYOUT.BORDER_RADIUS,
-    boxShadow: LAYOUT.CARD_SHADOW,
-    padding: responsiveStyles.isMobile ? '1rem' : responsiveStyles.padding,
-    border: '1.5px solid #fff',
-    backdropFilter: 'blur(2px)',
-    width: '100%',
-    maxWidth: responsiveStyles.isMobile ? '95vw' : '600px',
-    margin: '0 auto',
-    boxSizing: 'border-box',
-    overflow: 'hidden' // Prevent horizontal scroll
-  };
-
-  const sectionStyle = {
-    background: `rgba(255,255,255,${LAYOUT.SECTION_BG_OPACITY})`,
-    borderRadius: LAYOUT.SMALL_BORDER_RADIUS,
-    padding: responsiveStyles.isMobile ? '1rem' : '1.5rem',
-    border: '1px solid rgba(255,255,255,0.3)',
-    marginBottom: LAYOUT.SECTION_GAP,
-    width: '100%',
-    boxSizing: 'border-box',
-    overflow: 'hidden' // Prevent horizontal scroll
-  };
-
-  const buttonStyle = (color = playerTeam?.color || '#667eea') => ({
-    background: color,
-    color: 'white',
-    border: 'none',
-    borderRadius: LAYOUT.SMALL_BORDER_RADIUS,
-    padding: responsiveStyles.isMobile ? '0.5rem 0.8rem' : '0.5rem 1rem',
-    cursor: 'pointer',
-    fontWeight: 600,
-    fontSize: responsiveStyles.isMobile ? '0.9rem' : '1rem',
-    boxShadow: LAYOUT.BUTTON_SHADOW
-  });
-
-  if (!isAdmin) {
-    return (
-      <div style={containerStyle}>
-        <div style={cardStyle}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-            <h1 style={{ 
-              color: playerTeam?.color || '#667eea', 
-              fontWeight: 800, 
-              fontSize: responsiveStyles.isMobile ? '1.5rem' : '1.8rem', 
-              margin: 0 
-            }}>🏆 Drunksters Settings</h1>
-            <button onClick={onBack} style={buttonStyle()}>← Back</button>
-          </div>
-          <div style={{ textAlign: 'center', padding: '2rem', color: '#666' }}>
-            <h2 style={{ color: playerTeam?.color || '#667eea', marginBottom: '1rem' }}>Access Denied</h2>
-            <p>Only team admins can access settings.</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (loading) {
-    return (
-      <div style={containerStyle}>
-        <div style={cardStyle}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-            <h1 style={{ 
-              color: playerTeam?.color || '#667eea', 
-              fontWeight: 800, 
-              fontSize: responsiveStyles.isMobile ? '1.5rem' : '1.8rem', 
-              margin: 0 
-            }}>🏆 Drunksters Settings</h1>
-            <button onClick={onBack} style={buttonStyle()}>← Back</button>
-          </div>
-          <div style={{ textAlign: 'center', padding: '2rem', color: '#666' }}>
-            Loading settings...
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   const handleSaveSettings = async () => {
+    if (!isTeamAdmin) return;
     setSaving(true);
     setMessage('');
-    
     try {
       const response = await fetch(`${API_BASE}/settings`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           settings,
-          admin: player
+          admin: player,
+          adminPassword,
         })
       });
-      
       if (response.ok) {
         setMessage('Settings saved successfully!');
         // Update the game state to reflect changes
@@ -262,29 +161,88 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
   };
 
   const handleResetToDefault = () => {
-    const defaultSettings = {
-      teams: {
-        "Team Omri": {
-          color: '#1976d2',
-          members: ["Keniya", "Pita", "Misha", "Roni", "Omri", "Segev"],
-          password: "teamomri2024",
-          adminPassword: "omriadmin2024",
-          admin: "Omri"
-        },
-        "Team Yoad": {
-          color: '#d32f2f',
-          members: ["Meitav", "Jules", "Tetro", "Idan", "Yoad"],
-          password: "teamyoad2024",
-          adminPassword: "yoadadmin2024",
-          admin: "Yoad"
-        }
-      },
+    setSettings({
+      teams: {},
       questPoints: 10,
-      masterPassword: "admin2024",
+      masterPassword: '',
       chatEnabled: true
-    };
-    setSettings(defaultSettings);
+    });
   };
+
+  // Style objects for layout and theming
+  const containerStyle = {
+    minHeight: '100vh',
+    width: '100vw',
+    margin: 0,
+    boxSizing: 'border-box',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: responsiveStyles.isMobile ? '1rem' : '2vw 1vw 1vw 1vw',
+    fontFamily: 'Inter, system-ui, Avenir, Helvetica, Arial, sans-serif',
+    maxWidth: '100vw',
+    position: 'relative',
+    background: `linear-gradient(135deg, ${playerTeam?.color || '#667eea'}20 0%, ${playerTeam?.color || '#764ba2'}40 100%)`,
+    overflow: 'hidden' // Prevent horizontal scroll
+  };
+
+  const cardStyle = {
+    background: `rgba(255,255,255,${LAYOUT.CARD_BG_OPACITY})`,
+    borderRadius: LAYOUT.BORDER_RADIUS,
+    boxShadow: LAYOUT.CARD_SHADOW,
+    padding: responsiveStyles.isMobile ? '1rem' : responsiveStyles.padding,
+    border: '1.5px solid #fff',
+    backdropFilter: 'blur(2px)',
+    width: '100%',
+    maxWidth: responsiveStyles.isMobile ? '95vw' : '600px',
+    margin: '0 auto',
+    boxSizing: 'border-box',
+    overflow: 'hidden' // Prevent horizontal scroll
+  };
+
+  const sectionStyle = {
+    background: `rgba(255,255,255,${LAYOUT.SECTION_BG_OPACITY})`,
+    borderRadius: LAYOUT.SMALL_BORDER_RADIUS,
+    padding: responsiveStyles.isMobile ? '1rem' : '1.5rem',
+    border: '1px solid rgba(255,255,255,0.3)',
+    marginBottom: LAYOUT.SECTION_GAP,
+    width: '100%',
+    boxSizing: 'border-box',
+    overflow: 'hidden' // Prevent horizontal scroll
+  };
+
+  const buttonStyle = (color = playerTeam?.color || '#667eea') => ({
+    background: color,
+    color: 'white',
+    border: 'none',
+    borderRadius: LAYOUT.SMALL_BORDER_RADIUS,
+    padding: responsiveStyles.isMobile ? '0.5rem 0.8rem' : '0.5rem 1rem',
+    cursor: 'pointer',
+    fontWeight: 600,
+    fontSize: responsiveStyles.isMobile ? '0.9rem' : '1rem',
+    boxShadow: LAYOUT.BUTTON_SHADOW
+  });
+
+  if (loading) {
+    return (
+      <div style={containerStyle}>
+        <div style={cardStyle}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+            <h1 style={{ 
+              color: playerTeam?.color || '#667eea', 
+              fontWeight: 800, 
+              fontSize: responsiveStyles.isMobile ? '1.5rem' : '1.8rem', 
+              margin: 0 
+            }}>🏆 Drunksters Settings</h1>
+            <button onClick={onBack} style={buttonStyle()}>← Back</button>
+          </div>
+          <div style={{ textAlign: 'center', padding: '2rem', color: '#666' }}>
+            Loading settings...
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={containerStyle}>
@@ -441,7 +399,7 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
                         width: '100%',
                         boxSizing: 'border-box'
                       }}>
-                        {team.members.map(member => (
+                        {[team.admin, ...team.members.filter(m => m !== team.admin)].map(member => (
                           <div key={member} style={{
                             background: '#fff',
                             borderRadius: 6,
@@ -453,13 +411,16 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
                             fontSize: responsiveStyles.isMobile ? '0.8rem' : '1rem',
                             maxWidth: '100%',
                             boxSizing: 'border-box',
-                            wordBreak: 'break-word'
+                            wordBreak: 'break-word',
+                            opacity: member === team.admin ? 0.7 : 1,
+                            fontWeight: member === team.admin ? 700 : 500
                           }}>
                             <span style={{ 
                               overflow: 'hidden', 
                               textOverflow: 'ellipsis', 
                               whiteSpace: 'nowrap',
-                              maxWidth: responsiveStyles.isMobile ? '80px' : '120px'
+                              maxWidth: responsiveStyles.isMobile ? '80px' : '120px',
+                              color: member === team.admin ? team.color : undefined
                             }}>{member}</span>
                             <button 
                               onClick={() => handleRemoveMember(teamName, member)}
@@ -470,12 +431,13 @@ function Settings({ player, gameState, onBack, onUpdateGameState }) {
                                 borderRadius: '50%',
                                 width: '18px',
                                 height: '18px',
-                                cursor: 'pointer',
+                                cursor: member === team.admin ? 'not-allowed' : 'pointer',
                                 fontSize: '10px',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                flexShrink: 0
+                                flexShrink: 0,
+                                opacity: member === team.admin ? 0.4 : 1
                               }}
                               disabled={member === team.admin}
                             >

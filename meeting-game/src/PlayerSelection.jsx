@@ -29,16 +29,12 @@ export default function PlayerSelection({ onSelectPlayer }) {
             {
               name: "Team Omri",
               color: "#1976d2",
-              members: ["Keniya", "Pita", "Misha", "Roni", "Omri", "Segev"],
-              password: "teamomri2024",
-              adminPassword: "omriadmin2024"
+              members: ["Keniya", "Pita", "Misha", "Roni", "Omri", "Segev"]
             },
             {
               name: "Team Yoad",
               color: "#d32f2f",
-              members: ["Meitav", "Jules", "Tetro", "Idan", "Yoad"],
-              password: "teamyoad2024",
-              adminPassword: "yoadadmin2024"
+              members: ["Meitav", "Jules", "Tetro", "Idan", "Yoad"]
             },
           ]);
         }
@@ -49,16 +45,12 @@ export default function PlayerSelection({ onSelectPlayer }) {
           {
             name: "Team Omri",
             color: "#1976d2",
-            members: ["Keniya", "Pita", "Misha", "Roni", "Omri", "Segev"],
-            password: "teamomri2024",
-            adminPassword: "omriadmin2024"
+            members: ["Keniya", "Pita", "Misha", "Roni", "Omri", "Segev"]
           },
           {
             name: "Team Yoad",
             color: "#d32f2f",
-            members: ["Meitav", "Jules", "Tetro", "Idan", "Yoad"],
-            password: "teamyoad2024",
-            adminPassword: "yoadadmin2024"
+            members: ["Meitav", "Jules", "Tetro", "Idan", "Yoad"]
           },
         ]);
       } finally {
